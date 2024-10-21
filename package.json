@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --watch  src/server.js",
-    "generate-erd": "npx mongoose-erd -f ./src/model/Academic/AcademicTerm.model.js -o ./output/erd.png"
+    "start": "node --watch  src/server.js"
   },
   "keywords": [
     "nodejs",
