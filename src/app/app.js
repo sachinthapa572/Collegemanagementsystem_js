@@ -1,8 +1,12 @@
+import dotenv from 'dotenv/config';
+import express from 'express';
+import adminRouter from '../routes/staff/admin.routes.js';
+import morgan from 'morgan';
 
-import dotenv from "dotenv/config"
-import express from "express";
+const app = express();
 
-const app = express()
+//==> middlewares <==//
+app.use(morgan('dev'));
+app.use('/api/v1/admins', adminRouter);
 
-
-export { app }
+export { app };

@@ -1,11 +1,9 @@
 import http from 'http';
-import morgan from 'morgan';
 import { app } from './app/app.js';
 import dotenv from 'dotenv/config';
 import { dbConnect } from './config/dbConnect.js';
 
-//==> middlewares <==//
-app.use(morgan('dev'));
+
 
 // server
 const PORT = process.env.PORT || 3001;
