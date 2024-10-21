@@ -1,89 +1,65 @@
 import { Router } from 'express';
+import {
+	DeleteAdminContoller,
+	GetAllAdminsContoller,
+	GetSingleAdminContoller,
+	LoginAdminContoller,
+	PublishExamsContoller,
+	RegisterAdminContoller,
+	SuspendTeacherContoller,
+	UnpublishExamsContoller,
+	UnsuspendTeacherContoller,
+	UnwithdrawTeacherContoller,
+	UpdateAdminContoller,
+	WithdrawTeacherContoller,
+} from '../../controller/staff/staff.controller.js';
 
 const adminRouter = Router();
 
 // register a new admin
-adminRouter.route('/register').post((req, res) => {
-	res.status(201).json({
-		message: 'Admin created successfully',
-	});
-});
+adminRouter.route('/register').post(RegisterAdminContoller);
 
 // login the admin
-adminRouter.route('/login').post((req, res) => {
-	res.status(200).json({
-		message: 'Admin logged in successfully',
-	});
-});
+adminRouter.route('/login').post(LoginAdminContoller);
 
 // get all admins
-adminRouter.route('/').get((req, res) => {
-	res.status(200).json({
-		message: 'all admins info',
-	});
-});
+adminRouter.route('/').get(GetAllAdminsContoller);
 
 // get a single admin info
-adminRouter.route('/:id').get((req, res) => {
-	res.status(200).json({
-		message: ' Single Admin Info ',
-	});
-});
+adminRouter.route('/:id').get(GetSingleAdminContoller);
 
 // update admin info
-adminRouter.route('/:id').put((req, res) => {
-	res.status(200).json({
-		message: 'Update Admin Info',
-	});
-});
+adminRouter.route('/:id').put(UpdateAdminContoller);
 
 // delete admin account
-adminRouter.route('/:id').delete((req, res) => {
-	res.status(200).json({
-		message: 'Admin deleted successfully',
-	});
-});
+adminRouter.route('/:id').delete(DeleteAdminContoller);
 
 // suspend teacher account
-adminRouter.route('/suspend/teacher/:id').put((req, res) => {
-	res.status(200).json({
-		message: 'Teacher suspended successfully',
-	});
-});
+adminRouter
+	.route('/suspend/teacher/:id')
+	.put(SuspendTeacherContoller);
 
 // unsuspend teacher account
-adminRouter.route('/unsuspend/teacher/:id').put((req, res) => {
-	res.status(200).json({
-		message: 'Teacher unsuspended successfully',
-	});
-});
+adminRouter
+	.route('/unsuspend/teacher/:id')
+	.put(UnsuspendTeacherContoller);
 
 // withdraw teacher
-adminRouter.route('/withdraw/teacher/:id').put((req, res) => {
-	res.status(200).json({
-		message: 'Teacher withdrawn successfully',
-	});
-});
+adminRouter
+	.route('/withdraw/teacher/:id')
+	.put(WithdrawTeacherContoller);
 
 // unwithdraw teacher
-adminRouter.route('/unwithdraw/teacher/:id').put((req, res) => {
-	res.status(200).json({
-		message: ' Teacher unwithdrawn successfully',
-	});
-});
+adminRouter
+	.route('/unwithdraw/teacher/:id')
+	.put(UnwithdrawTeacherContoller);
 
 // publish exams
-adminRouter.route('/publish/exams/:id').put((req, res) => {
-	res.status(200).json({
-		message: 'Admin route',
-	});
-});
+adminRouter.route('/publish/exams/:id').put(PublishExamsContoller);
 
 // unpublish exams
-adminRouter.route('/unpublish/exams/:id').put((req, res) => {
-	res.status(200).json({
-		message: 'Admin route',
-	});
-});
+adminRouter
+	.route('/unpublish/exams/:id')
+	.put(UnpublishExamsContoller);
 
 export default adminRouter;
