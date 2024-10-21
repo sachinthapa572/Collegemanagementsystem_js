@@ -1,0 +1,30 @@
+{
+  "name": "schoolmanagementsystem_js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --watch  src/server.js",
+    "generate-erd": "npx mongoose-erd -f ./src/model/Academic/AcademicTerm.model.js -o ./output/erd.png"
+  },
+  "keywords": [
+    "nodejs",
+    "express"
+  ],
+  "author": "Sachin Thapa",
+  "license": "ISC",
+  "description": "schoolmanagementsystem ",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.0"
+  },
+  "devDependencies": {
+    "mongoose-erd": "^1.0.1",
+    "morgan": "^1.10.0"
+  }
+}
