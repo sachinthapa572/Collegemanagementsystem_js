@@ -1,5 +1,12 @@
 import { model, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import {
+	ACCESS_TOKEN_EXPIRES_IN,
+	ACCESS_TOKEN_SECRET,
+	REFRESH_TOKEN_EXPIRES_IN,
+	REFRESH_TOKEN_SECRET,
+} from '../../constant.js';
 
 const adminSchema = new Schema(
 	{
@@ -25,6 +32,9 @@ const adminSchema = new Schema(
 			type: String,
 			default: 'admin',
 		},
+		refreshToken: {
+			type: String,
+		},
 	},
 	{
 		timestamps: true,
@@ -44,12 +54,44 @@ adminSchema.pre('save', async function (next) {
 });
 
 // compare the password
-adminSchema.methods.matchPasswords = async function (enterPassword) {
+adminSchema.methods.isPasswordCorrect = async function (password) {
 	// return true or false
-	return  bcrypt.compare(enterPassword, this.password);
+	return await bcrypt.compare(password, this.password);
 };
 
-// model
+// tokens
+adminSchema.methods.generateAccessToken = function () {
+	return jwt.sign(
+		{
+			_id: this._id,
+		},
+		REFRESH_TOKEN_SECRET,
+		{
+			expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+		}
+	);
+};
+adminSchema.methods.generateRefreshToken = function () {
+	return jwt.sign(
+		{
+			_id: this._id,
+			email: this.email,
+			username: this.username,
+			role: this.role,
+		},
+		ACCESS_TOKEN_SECRET,
+		{
+			expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+		}
+	);
+};
+
+adminSchema.methods.toJSON = function () {
+	const admin = this.toObject();
+	delete admin.password;
+	delete admin.refreshToken;
+	return admin;
+};
 
 const Admin = model('Admin', adminSchema);
 

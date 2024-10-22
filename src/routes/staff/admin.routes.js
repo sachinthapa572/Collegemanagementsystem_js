@@ -13,6 +13,7 @@ import {
 	UpdateAdminContoller,
 	WithdrawTeacherContoller,
 } from '../../controller/staff/staff.controller.js';
+import { verifyJWT } from '../../middlewares/isAuth.middelware.js';
 
 const adminRouter = Router();
 
@@ -23,7 +24,7 @@ adminRouter.route('/register').post(RegisterAdminContoller);
 adminRouter.route('/login').post(LoginAdminContoller);
 
 // get all admins
-adminRouter.route('/').get(GetAllAdminsContoller);
+adminRouter.route('/').get(verifyJWT, GetAllAdminsContoller);
 
 // get a single admin info
 adminRouter.route('/:id').get(GetSingleAdminContoller);
