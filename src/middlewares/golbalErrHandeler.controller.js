@@ -7,3 +7,12 @@ export const globalErrHandeler = (err, req, res, next) => {
 		stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
 	});
 };
+
+// Not found route handler
+
+export const notFoundErr = (req, res, next) => {
+	const err = new Error(
+		`Not Found - ${req.originalUrl} on the server`
+	);
+	next(err);
+};
