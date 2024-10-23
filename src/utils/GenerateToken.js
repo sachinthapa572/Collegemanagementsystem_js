@@ -1,12 +1,5 @@
-import jwt from 'jsonwebtoken';
-import Admin from '../model/Staff/Admin.model.js';
 
-import {
-	ACCESS_TOKEN_EXPIRES_IN,
-	ACCESS_TOKEN_SECRET,
-	REFRESH_TOKEN_EXPIRES_IN,
-	REFRESH_TOKEN_SECRET,
-} from '../constant.js';
+import Admin from '../model/Staff/Admin.model.js';
 import ApiError from './ApiError.js';
 
 const generateAccessTokenAndRefreshToken = async (userId) => {
