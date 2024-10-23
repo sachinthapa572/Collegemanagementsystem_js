@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_SECRET } from '../constant.js';
+import {  environmentVariables } from '../constant.js';
 import Admin from '../model/Staff/Admin.model.js';
 import ApiError from '../utils/ApiError.js';
 import jwt from 'jsonwebtoken';
@@ -21,7 +21,10 @@ const verifyJWT = async (req, _, next) => {
 			);
 		}
 
-		const decodedToken = jwt.verify(token, ACCESS_TOKEN_SECRET);
+		const decodedToken = jwt.verify(
+			token,
+			environmentVariables.ACCESS_TOKEN_SECRET
+		);
 		const _id = decodedToken?._id;
 		const user = await Admin.findById(_id).select(
 			'-password -refreshToken'

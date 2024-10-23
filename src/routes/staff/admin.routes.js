@@ -14,11 +14,17 @@ import {
 	WithdrawTeacherContoller,
 } from '../../controller/staff/staff.controller.js';
 import { verifyJWT } from '../../middlewares/isAuth.middelware.js';
+import { uploadFileMulter } from '../../middlewares/multer.middlewares.js';
 
 const adminRouter = Router();
 
 // register a new admin
-adminRouter.route('/register').post(RegisterAdminContoller);
+adminRouter
+	.route('/register')
+	.post(
+		uploadFileMulter.single('coverImage'),
+		RegisterAdminContoller
+	);
 
 // login the admin
 adminRouter.route('/login').post(LoginAdminContoller);
