@@ -34,6 +34,36 @@ const adminSchema = new Schema(
 			type: String,
 			required: true,
 		},
+		academicTerms: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'AcademicTerm',
+			},
+		],
+		academicYears: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'AcademicYear',
+			},
+		],
+		classLevels: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'ClassLevel',
+			},
+		],
+		teachers: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Teacher',
+			},
+		],
+		students: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Student',
+			},
+		],
 	},
 	{
 		timestamps: true,
