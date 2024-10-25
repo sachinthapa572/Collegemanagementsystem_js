@@ -2,9 +2,8 @@ import { environmentVariables } from '../constant.js';
 import ApiError from '../utils/ApiError.js';
 import multer from 'multer';
 
-export const globalErrHandler = (err, _, res, next) => {
+ const globalErrHandler = (err, _, res, next) => {
 	if (err instanceof multer.MulterError) {
-		console.log('yep multer error');
 		let message;
 		switch (err.code) {
 			case 'LIMIT_FILE_SIZE':
@@ -45,10 +44,13 @@ export const globalErrHandler = (err, _, res, next) => {
 };
 
 // Not Found route handler
-export const notFoundErr = (req, _, next) => {
+ const notFoundErr = (req, _, next) => {
 	const err = new ApiError(
 		404,
 		`Not Found - ${req.originalUrl} on the server`
 	);
 	next(err);
 };
+
+
+export { globalErrHandler, notFoundErr };
