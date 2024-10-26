@@ -13,6 +13,7 @@ import bcrypt from 'bcryptjs';
 import {
 	loginAdminSchema,
 	registerAdminSchema,
+	singleAdminSchema,
 	updateAdminSchema,
 } from '../../schemas/Admin.schema.js';
 

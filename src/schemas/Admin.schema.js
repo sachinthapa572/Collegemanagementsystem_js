@@ -47,10 +47,6 @@ export const updateAdminSchema = z
 			path: ['oldPassword', 'newPassword'],
 		}
 	)
-	.refine((data) => data.newPassword !== data.oldPassword, {
-		message: 'New password must be different from the old password',
-		path: ['newPassword'],
-	});
 
 export const singleAdminSchema = z.object({
 	email: emailField,
