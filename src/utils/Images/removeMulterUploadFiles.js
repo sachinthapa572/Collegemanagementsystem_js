@@ -1,22 +1,20 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
-const removeMulterUploadFiles = (files) => {
+const removeMulterUploadFiles = async (files) => {
 	if (!files) return;
 
-	Object.values(files).forEach((fileArray) => {
-		fileArray.forEach((file) => {
-			const filePath = path.normalize(file.path); // Normalize file pat
-			fs.unlink(filePath, (err) => {
-				if (err) {
-					console.error(
-						`Failed to delete file ${filePath}:`,
-						err
-					);
-				}
-			});
-		});
-	});
+	const fileArrays = Array.isArray(files) ? files : [files];
+
+	for (const file of fileArrays) {
+		try {
+			const filePath = path.normalize(file);
+			await fs.unlink(filePath);
+			console.log(`File ${filePath} deleted successfully.`);
+		} catch (err) {
+			console.error(`Failed to delete file ${filePath}:`, err);
+		}
+	}
 };
 
-export { removeMulterUploadFiles };
+export default removeMulterUploadFiles;
