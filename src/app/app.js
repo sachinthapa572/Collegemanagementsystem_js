@@ -1,12 +1,12 @@
-import dotenv from 'dotenv/config';
 import express from 'express';
-import adminRouter from '../routes/staff/admin.routes.js';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import {
 	globalErrHandler,
 	notFoundErr,
 } from '../middlewares/globalErrHandler.middleware.js';
+import adminRouter from '../routes/staff/admin.routes.js';
+import academicYearRouter from '../routes/academics/academicYear.route.js';
 
 const app = express();
 
@@ -24,6 +24,7 @@ app.use(express.static('public'));
 //==> routes <==//
 
 app.use('/api/v1/admins', adminRouter);
+app.use('/api/v1/academic-year', academicYearRouter);
 
 //==> error middleware <==//
 app.use(notFoundErr);

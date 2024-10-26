@@ -1,4 +1,4 @@
-import {  environmentVariables } from '../constant.js';
+import { environmentVariables } from '../constant.js';
 import Admin from '../model/Staff/Admin.model.js';
 import ApiError from '../utils/ApiError.js';
 import jwt from 'jsonwebtoken';
@@ -39,13 +39,19 @@ const verifyJWT = async (req, _, next) => {
 		req.user = user;
 		next();
 	} catch (error) {
-		return next(
-			new ApiError(
-				401,
-				'Unauthorized request: Invalid or expired access token'
-			)
-		);
+		if (
+			error.name === 'JsonWebTokenError' ||
+			error.name === 'TokenExpiredError'
+		) {
+			return next(
+				new ApiError(
+					401,
+					'Unauthorized request: Invalid or expired access token'
+				)
+			);
+		}
+		return next(new ApiError(500, 'Internal Server Error'));
 	}
 };
 
-export { verifyJWT };
+export { verifyJWT as isAuth };

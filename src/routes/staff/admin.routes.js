@@ -14,7 +14,7 @@ import {
 	UpdateAdminController,
 	WithdrawTeacherController,
 } from '../../controller/staff/staff.controller.js';
-import { verifyJWT } from '../../middlewares/isAuth.middleware.js';
+import { isAuth } from '../../middlewares/isAuth.middleware.js';
 import { uploadFileMulter } from '../../middlewares/multer.middleware.js';
 import { isAdmin } from '../../middlewares/isAdmin.middleware.js';
 
@@ -34,12 +34,12 @@ adminRouter.route('/login').post(LoginAdminController);
 // get all admins
 adminRouter
 	.route('/')
-	.get(verifyJWT, isAdmin, GetAllAdminsController);
+	.get(isAuth, isAdmin, GetAllAdminsController);
 
 // get a specific  admin info
 adminRouter
 	.route('/currentAdmin-profile')
-	.get(verifyJWT, GetSpecificAdminController);
+	.get(isAuth, GetSpecificAdminController);
 
 // get a specific admin info by email
 adminRouter.route('/profile').get(GetSingleAdminController);
@@ -49,7 +49,7 @@ adminRouter
 	.route('/')
 	.put(
 		uploadFileMulter.single('coverImage'),
-		verifyJWT,
+		isAuth,
 		isAdmin,
 		UpdateAdminController
 	);
