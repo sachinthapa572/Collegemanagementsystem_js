@@ -19,7 +19,7 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
 			accessToken,
 		};
 	} catch (error) {
-		throw new ApiError(500, 'Error occured while generating token');
+		throw new ApiError(500, 'Error occurred while generating token');
 	}
 };
 

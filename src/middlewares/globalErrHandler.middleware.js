@@ -1,8 +1,11 @@
 import { environmentVariables } from '../constant.js';
 import ApiError from '../utils/ApiError.js';
 import multer from 'multer';
+import { z } from 'zod';
+import removeMulterUploadFiles from '../utils/Images/removeMulterUploadFiles.js';
 
- const globalErrHandler = (err, _, res, next) => {
+const globalErrHandler = (err, req, res, next) => {
+	// Multer error
 	if (err instanceof multer.MulterError) {
 		let message;
 		switch (err.code) {
@@ -20,6 +23,25 @@ import multer from 'multer';
 		}
 
 		err = new ApiError(400, message);
+		next(err);
+	}
+
+	// zod validation error
+	if (err instanceof z.ZodError) {
+		const errors = err.errors.map((error) => {
+			const { path, message } = error;
+			return { path, message };
+		});
+
+		err = new ApiError(
+			400,
+			'Invalid data. Please check your data',
+			errors
+		);
+
+		if (req.file) {
+			removeMulterUploadFiles(req.file.path);
+		}
 		next(err);
 	}
 
@@ -44,13 +66,12 @@ import multer from 'multer';
 };
 
 // Not Found route handler
- const notFoundErr = (req, _, next) => {
+const notFoundErr = (req, _, next) => {
 	const err = new ApiError(
 		404,
 		`Not Found - ${req.originalUrl} on the server`
 	);
 	next(err);
 };
-
 
 export { globalErrHandler, notFoundErr };

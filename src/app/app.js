@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import {
 	globalErrHandler,
 	notFoundErr,
-} from '../middlewares/golbalErrHandeler.controller.js';
+} from '../middlewares/globalErrHandler.middleware.js';
 
 const app = express();
 
