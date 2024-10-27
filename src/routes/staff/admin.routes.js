@@ -17,6 +17,8 @@ import {
 import { isAuth } from '../../middlewares/isAuth.middleware.js';
 import { uploadFileMulter } from '../../middlewares/multer.middleware.js';
 import { isAdmin } from '../../middlewares/isAdmin.middleware.js';
+import { isValidObjectId } from 'mongoose';
+import validateObjectId from '../../middlewares/validateObjectId.middleware.js';
 
 const adminRouter = Router();
 
@@ -32,9 +34,7 @@ adminRouter
 adminRouter.route('/login').post(LoginAdminController);
 
 // get all admins
-adminRouter
-	.route('/')
-	.get(isAuth, isAdmin, GetAllAdminsController);
+adminRouter.route('/').get(isAuth, isAdmin, GetAllAdminsController);
 
 // get a specific  admin info
 adminRouter
@@ -55,7 +55,9 @@ adminRouter
 	);
 
 // delete admin account
-adminRouter.route('/:id').delete(DeleteAdminController);
+adminRouter
+	.route('/:id')
+	.delete(isAuth, isAdmin, validateObjectId , DeleteAdminController);
 
 // suspend teacher account
 adminRouter
