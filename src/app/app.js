@@ -1,4 +1,5 @@
 import express from 'express';
+import dotenv from 'dotenv/config';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import {
@@ -11,7 +12,7 @@ import academicYearRouter from '../routes/academics/academicYear.route.js';
 const app = express();
 
 //==> middlewares <==//
-app.use(morgan('tiny'));
+app.use(morgan('dev'));
 app.use(
 	express.json({
 		limit: '16kb',
