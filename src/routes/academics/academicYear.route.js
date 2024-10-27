@@ -12,26 +12,17 @@ import validateObjectId from '../../middlewares/validateObjectId.middleware.js';
 
 const academicYearRouter = Router();
 
+academicYearRouter.use(isAuth, isAdmin);
+
 // create the academic year
 academicYearRouter
 	.route('/')
-	.post(isAuth, isAdmin, createAcademicYear)
-	.get(isAuth, isAdmin, getAcademicYears);
+	.post(createAcademicYear)
+	.get(getAcademicYears);
 
 // get academic year by id
 academicYearRouter
 	.route('/:id')
-	.get(isAuth, isAdmin, validateObjectId, getAcademicYearById);
-
-// check
-// update academic year by id
-academicYearRouter
-	.route('/:id')
-	.put(isAuth, isAdmin, validateObjectId, updateAcademicYear);
-
-// delete academic year by id
-academicYearRouter
-	.route('/:id')
-	.delete(isAuth, isAdmin, validateObjectId, deleteAcademicYear);
-
-export default academicYearRouter;
+	.get(validateObjectId, getAcademicYearById)
+	.put(validateObjectId, updateAcademicYear)
+	.delete(validateObjectId, deleteAcademicYear);
