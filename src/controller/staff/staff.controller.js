@@ -129,9 +129,12 @@ export const LoginAdminController = AsyncHandler(async (req, res) => {
 //* @access Private
 
 export const GetAllAdminsController = AsyncHandler(async (_, res) => {
-	const Admins = await Admin.find({}).select(
-		'-password -refreshToken'
-	);
+	const Admins = await Admin.find({})
+		.select('-password -refreshToken')
+		.populate({
+			path: 'academicYears',
+			options: { sort: { createdAt: -1 } },
+		});
 	return res
 		.status(200)
 		.json(
@@ -147,11 +150,22 @@ export const GetAllAdminsController = AsyncHandler(async (_, res) => {
 //* @route GET /api/v1/admin/
 //* @access Private
 
-export const GetSpecificAdminController = AsyncHandler((req, res) => {
-	return res
-		.status(200)
-		.json(new ApiResponse(200, req.user, 'Request Admin Details'));
-});
+export const GetSpecificAdminController = AsyncHandler(
+	async (req, res) => {
+		const adminDetail = await Admin.findById(req.user._id)
+			.select('-password -refreshToken')
+			.populate({
+				path: 'academicYears',
+				options: { sort: { createdAt: -1 } },
+			}); // show the actual data of the academic year
+
+		return res
+			.status(200)
+			.json(
+				new ApiResponse(200, adminDetail, 'Request Admin Details')
+			);
+	}
+);
 
 //* @desc Get a specific Admin by email
 //* @route GET /api/v1/admin/:email
@@ -163,7 +177,13 @@ export const GetSingleAdminController = AsyncHandler(
 		singleAdminSchema.parse({ email });
 		const CurrentAdmin = await Admin.findOne({
 			email,
-		});
+		})
+			.select('-password -refreshToken')
+			.populate({
+				path: 'academicYears',
+				options: { sort: { createdAt: -1 } },
+			});
+
 		if (!CurrentAdmin) {
 			throw new ApiError(404, 'Admin not found');
 		}
@@ -264,7 +284,12 @@ export const UpdateAdminController = AsyncHandler(
 				},
 			},
 			{ new: true, runValidators: true }
-		).select('-password -refreshToken');
+		)
+			.select('-password -refreshToken')
+			.populate({
+				path: 'academicYears',
+				options: { sort: { createdAt: -1 } },
+			});
 
 		if (!updatedAdmin) {
 			throw new ApiError(
@@ -290,11 +315,23 @@ export const UpdateAdminController = AsyncHandler(
 //* @route DELETE /api/v1/admin/:id
 //* @access Private
 
-export const DeleteAdminController = (req, res) => {
-	res.status(200).json({
-		message: 'Admin deleted successfully',
-	});
-};
+export const DeleteAdminController = AsyncHandler(
+	async (req, res) => {
+		const { id } = req.params;
+		const deletedAdmin = await Admin.findByIdAndDelete(id);
+		if (!deletedAdmin) {
+			throw new ApiError(404, 'Admin not found');
+		}
+		await deleteFromCloudinary(
+			deletedAdmin?.userImage?.split('/').pop()?.split('.')[0]
+		);
+		return res
+			.status(200)
+			.json(
+				new ApiResponse(200, {}, 'Admin deleted successfully')
+			);
+	}
+);
 
 //* @desc Suspend Teacher Account
 //* @route PUT /api/v1/admin/suspend/teacher/:id
@@ -332,7 +369,7 @@ export const WithdrawTeacherController = (req, res) => {
 
 export const UnwithdrawTeacherController = (req, res) => {
 	res.status(200).json({
-		message: ' Teacher unwithdrawn successfully',
+		message: ' Teacher unwithdraw successfully',
 	});
 };
 
