@@ -121,13 +121,17 @@ export const updateAcademicYear = AsyncHandler(async (req, res) => {
 export const deleteAcademicYear = AsyncHandler(async (req, res) => {
 	const academicYear = await AcademicYear.findByIdAndDelete(
 		req.params.id
-	);
+	).select('name -_id');
 
 	if (!academicYear) {
 		throw new ApiError(404, 'Academic year not found');
 	}
 
 	res.status(200).json(
-		new ApiResponse('Academic year deleted successfully', {})
+		new ApiResponse(
+			200,
+			academicYear,
+			'Academic year deleted successfully'
+		)
 	);
 });
