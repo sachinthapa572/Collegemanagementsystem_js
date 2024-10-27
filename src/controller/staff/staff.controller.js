@@ -107,9 +107,12 @@ export const LoginAdminController = AsyncHandler(async (req, res) => {
 	const { refreshToken, accessToken } =
 		await generateAccessTokenAndRefreshToken(currentUser._id);
 
-	const loginAdminDetails = await Admin.findById(
-		currentUser._id
-	).select('-password -refreshToken');
+	const loginAdminDetails = await Admin.findById(currentUser._id)
+		.select('-password -refreshToken')
+		.populate({
+			path: 'academicYears',
+			options: { sort: { createdAt: -1 } },
+		});
 
 	return res
 		.status(200)
@@ -318,7 +321,9 @@ export const UpdateAdminController = AsyncHandler(
 export const DeleteAdminController = AsyncHandler(
 	async (req, res) => {
 		const { id } = req.params;
-		const deletedAdmin = await Admin.findByIdAndDelete(id);
+		const deletedAdmin = await Admin.findByIdAndDelete(id).select(
+			'username email -_id'
+		);
 		if (!deletedAdmin) {
 			throw new ApiError(404, 'Admin not found');
 		}
@@ -328,7 +333,11 @@ export const DeleteAdminController = AsyncHandler(
 		return res
 			.status(200)
 			.json(
-				new ApiResponse(200, {}, 'Admin deleted successfully')
+				new ApiResponse(
+					200,
+					deletedAdmin,
+					'Admin deleted successfully'
+				)
 			);
 	}
 );
