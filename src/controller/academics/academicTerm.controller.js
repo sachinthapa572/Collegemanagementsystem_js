@@ -3,13 +3,16 @@ import ApiError from '../../utils/ApiError.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 import Admin from '../../model/Staff/Admin.model.js';
 import AcademicTerm from '../../model/Academic/AcademicTerm.model.js';
+import { createAcademicTermSchema, updateAcademicTermSchema } from '../../schemas/academicTerm.schemas.js';
+
 
 //*	@ desc Create a new academic Term
 //*	@ route POST /api/v1/academics/academic-term
 //*	@ access Private
 
 export const createAcademicTerm = AsyncHandler(async (req, res) => {
-	const { name, description, duration } = req.body;
+	const { name, description, duration } =
+		createAcademicTermSchema.parse(req.body);
 	const createdBy = req?.user?._id;
 
 	const academicTerm = await AcademicTerm.findOne({ name });
@@ -90,11 +93,19 @@ export const getAcademicTermById = AsyncHandler(async (req, res) => {
 //* @ access Private
 
 export const updateAcademicTerm = AsyncHandler(async (req, res) => {
-	const { name, description } = req.body;
+	const { name, description } = updateAcademicTermSchema.parse(
+		req.body
+	);
 	const updatedBy = req.user._id;
 
-	const academicTerm = await AcademicTerm.findOne({ name });
+	const academicTermExist = await AcademicTerm.findById(
+		req.params.id
+	);
+	if (!academicTermExist) {
+		throw new ApiError(404, 'Academic term not found');
+	}
 
+	const academicTerm = await AcademicTerm.findOne({ name });
 	if (academicTerm) {
 		throw new ApiError(400, 'Academic term already exist');
 	}
@@ -127,8 +138,9 @@ export const updateAcademicTerm = AsyncHandler(async (req, res) => {
 //* @ access Private
 
 export const deleteAcademicTerm = AsyncHandler(async (req, res) => {
+	const id = req.params.id;
 	const academicTerm = await AcademicTerm.findByIdAndDelete(
-		req.params.id
+		id
 	).select('name -_id');
 
 	if (!academicTerm) {
