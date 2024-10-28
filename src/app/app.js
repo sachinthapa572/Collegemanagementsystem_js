@@ -8,6 +8,7 @@ import {
 } from '../middlewares/globalErrHandler.middleware.js';
 import adminRouter from '../routes/staff/admin.routes.js';
 import academicYearRouter from '../routes/academics/academicYear.route.js';
+import academicTermRouter from '../routes/academics/academicTerm.route.js';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(express.static('public'));
 
 app.use('/api/v1/admins', adminRouter);
 app.use('/api/v1/academic-year', academicYearRouter);
+app.use('/api/v1/academic-term', academicTermRouter);
 
 //==> error middleware <==//
 app.use(notFoundErr);
