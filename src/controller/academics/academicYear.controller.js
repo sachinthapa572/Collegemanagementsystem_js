@@ -3,13 +3,19 @@ import AcademicYear from '../../model/Academic/AcademicYear.model.js';
 import ApiError from '../../utils/ApiError.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 import Admin from '../../model/Staff/Admin.model.js';
+import {
+	createAcademicYearSchema,
+	updateAcademicYearSchema,
+} from '../../schemas/academicYear.schema.js';
 
 //*	@ desc Create a new academic year
 //*	@ route POST /api/v1/academics/academic-year
 //*	@ access Private
 
 export const createAcademicYear = AsyncHandler(async (req, res) => {
-	const { name, fromYear, toYear } = req.body;
+	const { name, fromYear, toYear } = createAcademicYearSchema.parse(
+		req.body
+	);
 	const createdBy = req.user._id;
 
 	const academicYear = await AcademicYear.findOne({ name });
@@ -81,8 +87,16 @@ export const getAcademicYearById = AsyncHandler(async (req, res) => {
 //* @ access Private
 
 export const updateAcademicYear = AsyncHandler(async (req, res) => {
-	const { name, fromYear, toYear } = req.body;
+	const { name, fromYear, toYear } = updateAcademicYearSchema.parse(
+		req.body
+	);
 	const updatedBy = req.user._id;
+	const AcademicYearExist = await AcademicYear.findById(
+		req.params.id
+	);
+	if (!AcademicYearExist) {
+		throw new ApiError(404, 'Academic year not found');
+	}
 
 	const academicYear = await AcademicYear.findOne({ name });
 
@@ -102,7 +116,7 @@ export const updateAcademicYear = AsyncHandler(async (req, res) => {
 	);
 
 	if (!academicYearUpdated) {
-		throw new ApiError(404, 'Academic year not found');
+		throw new ApiError(401, 'Failed to update Academic year');
 	}
 
 	res.status(200).json(
