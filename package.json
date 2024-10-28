@@ -31,7 +31,6 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"mongoose-erd": "^1.0.1",
 		"morgan": "^1.10.0"
 	}
 }
