@@ -26,3 +26,5 @@ academicYearRouter
 	.get(validateObjectId, getAcademicYearById)
 	.put(validateObjectId, updateAcademicYear)
 	.delete(validateObjectId, deleteAcademicYear);
+
+export default academicYearRouter;

@@ -82,7 +82,6 @@ export const getAcademicYearById = AsyncHandler(async (req, res) => {
 
 export const updateAcademicYear = AsyncHandler(async (req, res) => {
 	const { name, fromYear, toYear } = req.body;
-	console.log(req.params.id);
 	const updatedBy = req.user._id;
 
 	const academicYear = await AcademicYear.findOne({ name });
