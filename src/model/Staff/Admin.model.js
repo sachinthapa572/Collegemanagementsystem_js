@@ -64,13 +64,19 @@ const adminSchema = new Schema(
 				ref: 'Student',
 			},
 		],
+		programs: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Program',
+			},
+		],
 	},
 	{
 		timestamps: true,
 	}
 );
 
-// moongoose middelware
+// mongoose middleware that hash the password before saving
 
 adminSchema.pre('save', async function (next) {
 	if (!this.isModified('password')) {
