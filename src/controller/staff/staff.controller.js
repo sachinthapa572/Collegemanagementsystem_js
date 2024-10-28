@@ -109,10 +109,12 @@ export const LoginAdminController = AsyncHandler(async (req, res) => {
 
 	const loginAdminDetails = await Admin.findById(currentUser._id)
 		.select('-password -refreshToken')
-		.populate({
-			path: 'academicYears',
-			options: { sort: { createdAt: -1 } },
-		});
+		.populate([
+			{ path: 'academicYears' },
+			{ path: 'classLevels' },
+			{ path: 'academicTerms' },
+		])
+		.sort({ createdAt: -1 });
 
 	return res
 		.status(200)

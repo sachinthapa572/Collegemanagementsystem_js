@@ -1,41 +1,24 @@
 import { z } from 'zod';
-
-// Define reusable fields
-const usernameField = z
-	.string()
-	.min(1, { message: "Username can't be empty" })
-	.max(15, { message: "Username can't be more than 15 characters" });
-
-const emailField = z
-	.string()
-	.email({ message: 'Invalid email address' });
-
-const passwordField = z.string().min(6, {
-	message: 'Password must be at least 6 characters long',
-});
-
-const roleField = z.enum(['admin', 'teacher', 'student'], {
-	message: 'Invalid role',
-});
+import { commonSchemaField } from './commonField.schema.js';
 
 export const registerAdminSchema = z.object({
-	username: usernameField,
-	email: emailField,
-	password: passwordField,
-	role: roleField.optional(),
+	username: commonSchemaField.usernameField,
+	email: commonSchemaField.emailField,
+	password: commonSchemaField.passwordField,
+	role: commonSchemaField.roleField.optional(),
 });
 
 export const loginAdminSchema = z.object({
-	email: emailField,
-	password: passwordField,
+	email: commonSchemaField.emailField,
+	password: commonSchemaField.passwordField,
 });
 
 export const updateAdminSchema = z
 	.object({
-		username: usernameField.optional(),
-		email: emailField.optional(),
-		oldPassword: passwordField.optional(),
-		newPassword: passwordField.optional(),
+		username: commonSchemaField.usernameField.optional(),
+		email: commonSchemaField.emailField.optional(),
+		oldPassword: commonSchemaField.passwordField.optional(),
+		newPassword: commonSchemaField.passwordField.optional(),
 	})
 	.refine(
 		(data) =>
@@ -46,8 +29,8 @@ export const updateAdminSchema = z
 				'Both old and new passwords must be provided together',
 			path: ['oldPassword', 'newPassword'],
 		}
-	)
+	);
 
 export const singleAdminSchema = z.object({
-	email: emailField,
+	email: commonSchemaField.emailField,
 });

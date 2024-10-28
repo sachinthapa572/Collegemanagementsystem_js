@@ -3,6 +3,7 @@ import ApiError from '../utils/ApiError.js';
 import multer from 'multer';
 import { z } from 'zod';
 import removeMulterUploadFiles from '../utils/Images/removeMulterUploadFiles.js';
+import mongoose from 'mongoose';
 
 const globalErrHandler = (err, req, res, next) => {
 	// Multer error
@@ -43,6 +44,22 @@ const globalErrHandler = (err, req, res, next) => {
 			removeMulterUploadFiles(req.file.path);
 		}
 		next(err);
+	}
+
+	// mongoose validation errors
+
+	if (err instanceof mongoose.Error.ValidationError) {
+		const errors = Object.values(err.errors).map((error) => ({
+			path: [error.path],
+			message: error.message,
+		}));
+
+		return res.status(400).json({
+			status: 'fail',
+			message: 'Invalid data. Please check your data',
+			success: false,
+			errors,
+		});
 	}
 
 	// If the error is not an instance of ApiError, convert it into one
