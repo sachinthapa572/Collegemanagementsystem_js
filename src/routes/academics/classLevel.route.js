@@ -9,10 +9,11 @@ import {
 	getClassLevels,
 	updateClassLevel,
 } from '../../controller/academics/classLevel.controller.js';
+import Admin from '../../model/Staff/Admin.model.js';
 
 const classLevelRouter = Router();
 
-classLevelRouter.use(isAuth, isAdmin);
+classLevelRouter.use(isAuth(Admin), isAdmin);
 
 // create and get all academic years
 classLevelRouter

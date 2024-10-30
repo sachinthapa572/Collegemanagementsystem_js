@@ -9,10 +9,11 @@ import {
 	getPrograms,
 	updateProgram,
 } from '../../controller/academics/program.controller.js';
+import Admin from '../../model/Staff/Admin.model.js';
 
 const programRouter = Router();
 
-programRouter.use(isAuth, isAdmin);
+programRouter.use(isAuth(Admin), isAdmin);
 
 programRouter.route('/').post(createProgram).get(getPrograms);
 

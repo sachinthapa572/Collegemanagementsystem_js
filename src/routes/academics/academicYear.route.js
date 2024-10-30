@@ -9,10 +9,11 @@ import {
 import { isAdmin } from '../../middlewares/isAdmin.middleware.js';
 import { isAuth } from '../../middlewares/isAuth.middleware.js';
 import validateObjectId from '../../middlewares/validateObjectId.middleware.js';
+import Admin from '../../model/Staff/Admin.model.js';
 
 const academicYearRouter = Router();
 
-academicYearRouter.use(isAuth, isAdmin);
+academicYearRouter.use(isAuth(Admin), isAdmin);
 
 // create the academic year
 academicYearRouter

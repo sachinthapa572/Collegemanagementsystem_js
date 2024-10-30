@@ -9,10 +9,11 @@ import {
 	updateAcademicTerm,
 } from '../../controller/academics/academicTerm.controller.js';
 import validateObjectId from '../../middlewares/validateObjectId.middleware.js';
+import Admin from '../../model/Staff/Admin.model.js';
 
 const academicTermRouter = Router();
 
-academicTermRouter.use(isAuth, isAdmin);
+academicTermRouter.use(isAuth(Admin), isAdmin);
 
 // create and get all academic years
 academicTermRouter

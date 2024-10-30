@@ -107,7 +107,7 @@ export const LoginAdminController = AsyncHandler(async (req, res) => {
 	const { refreshToken, accessToken } =
 		await generateAccessTokenAndRefreshToken(currentUser._id);
 
-	const loginAdminDetails = await Admin.findById(currentUser._id)
+	let loginAdminDetails = await Admin.findById(currentUser._id)
 		.select('-password -refreshToken')
 		.populate([
 			{ path: 'academicYears' },
@@ -116,6 +116,13 @@ export const LoginAdminController = AsyncHandler(async (req, res) => {
 		])
 		.sort({ createdAt: -1 });
 
+	//! pachi delete hane (Bearer token) send garda yesto format ma send garne token 
+
+	loginAdminDetails = {
+		...loginAdminDetails._doc,
+		accessToken: `Bearer ${accessToken}`,
+		refreshToken: `Bearer ${refreshToken}`,
+	}
 	return res
 		.status(200)
 		.cookie('accessToken', accessToken, cookiesOptions)

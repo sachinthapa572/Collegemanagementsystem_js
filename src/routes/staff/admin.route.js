@@ -18,6 +18,7 @@ import { isAuth } from '../../middlewares/isAuth.middleware.js';
 import { uploadFileMulter } from '../../middlewares/multer.middleware.js';
 import { isAdmin } from '../../middlewares/isAdmin.middleware.js';
 import validateObjectId from '../../middlewares/validateObjectId.middleware.js';
+import Admin from '../../model/Staff/Admin.model.js';
 
 const adminRouter = Router();
 
@@ -33,12 +34,12 @@ adminRouter
 adminRouter.route('/login').post(LoginAdminController);
 
 // get all admins
-adminRouter.route('/').get(isAuth, isAdmin, GetAllAdminsController);
+adminRouter.route('/').get(isAuth(Admin), isAdmin, GetAllAdminsController);
 
 // get a specific  admin info
 adminRouter
 	.route('/currentAdmin-profile')
-	.get(isAuth, GetSpecificAdminController);
+	.get(isAuth(Admin), GetSpecificAdminController);
 
 // get a specific admin info by email
 adminRouter.route('/profile').get(GetSingleAdminController);
@@ -48,7 +49,7 @@ adminRouter
 	.route('/')
 	.put(
 		uploadFileMulter.single('coverImage'),
-		isAuth,
+		isAuth(Admin),
 		isAdmin,
 		UpdateAdminController
 	);
@@ -56,34 +57,34 @@ adminRouter
 // delete admin account
 adminRouter
 	.route('/:id')
-	.delete(isAuth, isAdmin, validateObjectId, DeleteAdminController);
+	.delete(isAuth(Admin), isAdmin, validateObjectId, DeleteAdminController);
 
 // suspend teacher account
 adminRouter
 	.route('/suspend/teacher/:id')
-	.put(SuspendTeacherController);
+	.put(isAuth(Admin), isAdmin, validateObjectId, SuspendTeacherController);
 
 // unsuspend teacher account
 adminRouter
 	.route('/unsuspend/teacher/:id')
-	.put(UnsuspendTeacherController);
+	.put(isAuth(Admin), isAdmin, validateObjectId, UnsuspendTeacherController);
 
 // withdraw teacher
 adminRouter
 	.route('/withdraw/teacher/:id')
-	.put(WithdrawTeacherController);
+	.put(isAuth(Admin), isAdmin, validateObjectId, WithdrawTeacherController);
 
 // unwithdraw teacher
 adminRouter
 	.route('/unwithdraw/teacher/:id')
-	.put(UnwithdrawTeacherController);
+	.put(isAuth(Admin), isAdmin, validateObjectId, UnwithdrawTeacherController);
 
 // publish exams
-adminRouter.route('/publish/exams/:id').put(PublishExamsController);
+adminRouter.route('/publish/exams/:id').put(isAuth(Admin), isAdmin, validateObjectId, PublishExamsController);
 
 // unpublish exams
 adminRouter
 	.route('/unpublish/exams/:id')
-	.put(UnpublishExamsController);
+	.put(isAuth(Admin), isAdmin, validateObjectId, UnpublishExamsController);
 
 export default adminRouter;
