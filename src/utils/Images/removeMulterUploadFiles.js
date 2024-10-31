@@ -12,7 +12,7 @@ const removeMulterUploadFiles = async (files) => {
 			await fs.unlink(filePath);
 			console.log(`File ${filePath} deleted successfully.`);
 		} catch (err) {
-			console.error(`Failed to delete file ${filePath}:`, err);
+			console.error(`Failed to delete file `, err);
 		}
 	}
 };
