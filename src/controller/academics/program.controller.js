@@ -3,10 +3,8 @@ import Admin from '../../model/Staff/Admin.model.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 import Program from '../../model/Academic/Program.model.js';
 import ApiError from '../../utils/ApiError.js';
-import {
-	createProgramSchema,
-	updateProgramSchema,
-} from '../../schemas/program.schema.js';
+import { createProgramSchema, updateProgramSchema, } from '../../utils/Validation/program.schema.js';
+
 
 //* @ desc Create a new Program
 //* @ route POST /api/v1/academics/programs
@@ -38,10 +36,12 @@ export const createProgram = AsyncHandler(async (req, res) => {
 		);
 	}
 
-	// push the Program to the user
-	const admin = await Admin.findById(req.user._id);
-	admin.programs.push(createdProgram._id);
-	await admin.save();
+	// Add the program to the admin's list of programs
+
+	await Admin.updateOne(
+		{ _id: createdBy },
+		{ $push: { programs: createdProgram._id } }
+	)
 
 	res.status(201).json(
 		new ApiResponse(
@@ -60,8 +60,10 @@ export const getPrograms = AsyncHandler(async (req, res) => {
 	const programs = await Program.find({}).sort({
 		createdAt: 1,
 	});
+
+	const total = programs.length;
 	res.status(200).json(
-		new ApiResponse(200, 'Programs fetched successfully', programs)
+		new ApiResponse(200, 'Programs fetched successfully', {programs , total})
 	);
 });
 

@@ -7,11 +7,11 @@ const academicYearSchema = new Schema(
 			required: true,
 		},
 		fromYear: {
-			type: Date,
+			type: String,
 			required: true,
 		},
 		toYear: {
-			type: Date,
+			type: String,
 			required: true,
 		},
 		isCurrent: {

@@ -15,7 +15,8 @@ import {
 	registerAdminSchema,
 	singleAdminSchema,
 	updateAdminSchema,
-} from '../../schemas/Admin.schema.js';
+} from '../../utils/Validation/admin.schema.js';
+
 
 //* @desc Register a new Admin
 //* @route POST /api/v1/admin/register
@@ -147,12 +148,14 @@ export const GetAllAdminsController = AsyncHandler(async (_, res) => {
 			path: 'academicYears',
 			options: { sort: { createdAt: -1 } },
 		});
+	const total = await Admin.countDocuments({});
+
 	return res
 		.status(200)
 		.json(
 			new ApiResponse(
 				200,
-				Admins,
+				{ total, admins: Admins },
 				'All Admins fetched successfully'
 			)
 		);

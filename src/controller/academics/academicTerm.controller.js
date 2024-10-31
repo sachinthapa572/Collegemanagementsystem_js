@@ -3,7 +3,8 @@ import ApiError from '../../utils/ApiError.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 import Admin from '../../model/Staff/Admin.model.js';
 import AcademicTerm from '../../model/Academic/AcademicTerm.model.js';
-import { createAcademicTermSchema, updateAcademicTermSchema } from '../../schemas/academicTerm.schemas.js';
+import { createAcademicTermSchema, updateAcademicTermSchema } from '../../utils/Validation/academicTerm.schemas.js';
+
 
 
 //*	@ desc Create a new academic Term
@@ -36,9 +37,10 @@ export const createAcademicTerm = AsyncHandler(async (req, res) => {
 	}
 
 	// push the academic term to the user
-	const admin = await Admin.findById(req.user._id);
-	admin.academicTerms.push(academicTermCreated._id);
-	await admin.save();
+	await Admin.updateOne(
+		{ _id: req.user._id },
+		{ $push: { academicTerms: academicTermCreated._id } }
+	);
 
 	res.status(201).json(
 		new ApiResponse(
