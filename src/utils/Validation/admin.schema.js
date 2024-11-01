@@ -41,6 +41,15 @@ export const updateAdminSchema = z
 				'At least one field (username, email, oldPassword, newPassword) must be provided',
 		}
 	);
+export const updateAdminSchemaByAdmin = z
+	.object({
+		username: commonSchemaField.usernameField.optional(),
+		email: commonSchemaField.emailField.optional(),
+	})
+	.refine((data) => data.username || data.email, {
+		message:
+			'At least one field (username, email) must be provided',
+	});
 
 export const singleAdminSchema = z.object({
 	email: commonSchemaField.emailField,

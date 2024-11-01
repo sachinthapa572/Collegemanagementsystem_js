@@ -1,6 +1,7 @@
 import { environmentVariables } from '../constant.js';
 import ApiError from '../utils/ApiError.js';
 import jwt from 'jsonwebtoken';
+import removeMulterUploadFiles from '../utils/Images/removeMulterUploadFiles.js';
 
 const verifyJWT = (model) => {
 	return async (req, _, next) => {
@@ -13,6 +14,9 @@ const verifyJWT = (model) => {
 					.trim();
 
 			if (!token || token === 'undefined') {
+				if (req.file) {
+					removeMulterUploadFiles(req.file.path);
+				}
 				return next(
 					new ApiError(
 						401,
@@ -31,6 +35,9 @@ const verifyJWT = (model) => {
 				.select('-password -refreshToken');
 
 			if (!user) {
+				if (req.file) {
+					removeMulterUploadFiles(req.file.path);
+				}
 				return next(
 					new ApiError(
 						401,
@@ -46,12 +53,18 @@ const verifyJWT = (model) => {
 				error.name === 'JsonWebTokenError' ||
 				error.name === 'TokenExpiredError'
 			) {
+				if (req.file) {
+					removeMulterUploadFiles(req.file.path);
+				}
 				return next(
 					new ApiError(
 						401,
 						'Unauthorized request: Invalid or expired access token'
 					)
 				);
+			}
+			if (req.file) {
+				removeMulterUploadFiles(req.file.path);
 			}
 			return next(new ApiError(500, 'Internal Server Error'));
 		}

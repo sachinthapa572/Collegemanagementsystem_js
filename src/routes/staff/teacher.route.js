@@ -10,6 +10,7 @@ import {
 	GetSingleTeacherController,
 	LoginTeacherController,
 	LogoutTeacherController,
+	RefreshTeacherTokenController,
 	RegisterTeacherController,
 	UpdateTeacherController,
 	UpdateTeacherControllerByAdmin,
@@ -35,7 +36,7 @@ teacherRouter.route('/login').post(LoginTeacherController);
 // logout the Teacher
 teacherRouter
 	.route('/logout')
-	.post(
+	.get(
 		isAuth(Teacher),
 		roleRestriction('teacher'),
 		LogoutTeacherController
@@ -96,6 +97,12 @@ teacherRouter
 		roleRestriction('admin'),
 		validateObjectId,
 		DeleteTeacherController
-	);
+);
+
+// refresh Teacher access token
+
+teacherRouter
+	.route('/refresh-token')
+	.get(RefreshTeacherTokenController);
 
 export default teacherRouter;

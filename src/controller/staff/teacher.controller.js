@@ -14,6 +14,7 @@ import {
 	loginAdminSchema,
 	registerAdminSchema,
 	updateAdminSchema,
+	updateAdminSchemaByAdmin,
 } from '../../utils/Validation/admin.schema.js';
 import Admin from '../../model/Staff/Admin.model.js';
 
@@ -137,8 +138,6 @@ export const LoginTeacherController = AsyncHandler(
 			currentUser._id
 		).select('-password -refreshToken');
 
-		//! pachi delete hane (Bearer token) send garda yesto format ma send garne token
-
 		loginTeacherDetails = {
 			...loginTeacherDetails._doc,
 			accessToken: `Bearer ${accessToken}`,
@@ -184,7 +183,7 @@ export const GetAllTeachersController = AsyncHandler(
 );
 
 //* @desc Get a specific Teacher
-//* @route GET /api/v1/Teacher/profile
+//* @route GET /api/v1/teachers/profile
 //* @access Private
 
 export const GetCurrentTeacherController = AsyncHandler(
@@ -206,7 +205,7 @@ export const GetCurrentTeacherController = AsyncHandler(
 );
 
 //* @desc Get a specific Teacher by id
-// * @route GET /api/v1/Teacher/teacherId/admin
+// * @route GET /api/v1/teachers/teacherId/admin
 //* @access Public
 
 export const GetSingleTeacherController = AsyncHandler(
@@ -239,15 +238,17 @@ export const GetSingleTeacherController = AsyncHandler(
 );
 
 //* @desc Update Teacher Info
-//* @route PUT /api/v1/teacher/update
+//* @route PUT /api/v1/teachers/update
 //* @access Private
 
 export const UpdateTeacherController = AsyncHandler(
 	async (req, res) => {
-		const parsedBody = updateAdminSchema.parse(req.body);
-		const { username, email, oldPassword, newPassword } =
-			parsedBody;
 		const avatarLocalPath = req.file ? req.file.path : null;
+		let { username, email, oldPassword, newPassword } = req.body;
+		if (!avatarLocalPath) {
+			let { username, email, oldPassword, newPassword } =
+				updateAdminSchema.parse(req.body);
+		}
 
 		// Check if the current Teacher exists
 		const currentTeacher = await Teacher.findById(req.user._id);
@@ -273,7 +274,7 @@ export const UpdateTeacherController = AsyncHandler(
 		if (avatarLocalPath) {
 			const uploadedImage = await uploadOnCloudinary(
 				avatarLocalPath,
-				Teachers
+				'Teachers'
 			);
 			if (!uploadedImage?.url) {
 				removeMulterUploadFiles(avatarLocalPath);
@@ -330,16 +331,7 @@ export const UpdateTeacherController = AsyncHandler(
 				new: true,
 				runValidators: true,
 			}
-		)
-			.select('-password -refreshToken')
-			.populate({
-				path: 'academicYears',
-				options: {
-					sort: {
-						createdAt: -1,
-					},
-				},
-			});
+		).select('-password -refreshToken');
 
 		if (!updatedTeacher) {
 			throw new ApiError(
@@ -367,11 +359,18 @@ export const UpdateTeacherController = AsyncHandler(
 
 export const UpdateTeacherControllerByAdmin = AsyncHandler(
 	async (req, res) => {
-		const parsedBody = updateAdminSchema.parse(req.body);
-		const { username, email } = parsedBody;
-		const { teacherId } = req.params;
 		const avatarLocalPath = req.file ? req.file.path : null;
+		let { username, email } = req.body;
+		if (!avatarLocalPath) {
+			let { username, email } = updateAdminSchemaByAdmin.parse(
+				req.body
+			);
+		}
 
+		const { teacherId } = req.params;
+		if (!teacherId) {
+			throw new ApiError(400, 'Teacher Id is required');
+		}
 		// Check if the Teacher exists
 		const currentTeacher = await Teacher.findById(teacherId);
 		if (!currentTeacher) {
@@ -452,7 +451,7 @@ export const DeleteTeacherController = AsyncHandler(
 	async (req, res) => {
 		const { teacherId } = req.params;
 		const deletedTeacher = await Teacher.findByIdAndDelete(
-			id
+			teacherId
 		).select('username email -_id');
 		if (!deletedTeacher) {
 			throw new ApiError(404, 'Teacher not found');
@@ -501,42 +500,42 @@ export const LogoutTeacherController = AsyncHandler(
 );
 
 //* @desc Refresh Teacher Token;
-//* @route POST /api/v1/teachers/refresh;
+//* @route POST /api/v1/teachers/refresh-token;
 //* @access Private;
 
 export const RefreshTeacherTokenController = AsyncHandler(
 	async (req, res) => {
-		const { refreshToken } = req.cookies;
-		if (!refreshToken) {
+		const { refreshToken: sendRefreshToken } = req.cookies;
+		if (!sendRefreshToken) {
 			throw new ApiError(401, 'Unauthorized');
 		}
 
 		const currentTeacher = await Teacher.findOne({
-			refreshToken,
+			refreshToken: sendRefreshToken,
 		});
 		if (!currentTeacher) {
 			throw new ApiError(401, 'Unauthorized');
 		}
 
-		const { accessToken, newRefreshToken } =
+		const { accessToken, refreshToken } =
 			await generateAccessTokenAndRefreshToken(
 				Teacher,
 				currentTeacher._id
 			);
 
-		currentTeacher.refreshToken = newRefreshToken;
+		currentTeacher.refreshToken = refreshToken;
 		await currentTeacher.save();
 
 		return res
 			.status(200)
 			.cookie('accessToken', accessToken, cookiesOptions)
-			.cookie('refreshToken', newRefreshToken, cookiesOptions)
+			.cookie('refreshToken', refreshToken, cookiesOptions)
 			.json(
 				new ApiResponse(
 					200,
 					{
 						accessToken,
-						refreshToken: newRefreshToken,
+						refreshToken: refreshToken,
 					},
 					'Token refreshed successfully'
 				)
