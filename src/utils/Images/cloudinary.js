@@ -10,11 +10,11 @@ cloudinary.config({
 	secure: true,
 });
 
-const uploadOnCloudinary = async (filePath) => {
+const uploadOnCloudinary = async (filePath, folder) => {
 	try {
 		if (!filePath) return;
 		const result = await cloudinary.uploader.upload(filePath, {
-			asset_folder: 'SchoolManagementApp',
+			asset_folder: `SchoolManagementApp/${folder}`,
 			resource_type: 'auto',
 		});
 

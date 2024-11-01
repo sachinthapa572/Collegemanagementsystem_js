@@ -3,9 +3,10 @@ import ApiError from '../../utils/ApiError.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 import Admin from '../../model/Staff/Admin.model.js';
 import AcademicTerm from '../../model/Academic/AcademicTerm.model.js';
-import { createAcademicTermSchema, updateAcademicTermSchema } from '../../utils/Validation/academicTerm.schemas.js';
-
-
+import {
+	createAcademicTermSchema,
+	updateAcademicTermSchema,
+} from '../../utils/Validation/academicTerm.schemas.js';
 
 //*	@ desc Create a new academic Term
 //*	@ route POST /api/v1/academics/academic-term
@@ -38,8 +39,14 @@ export const createAcademicTerm = AsyncHandler(async (req, res) => {
 
 	// push the academic term to the user
 	await Admin.updateOne(
-		{ _id: req.user._id },
-		{ $push: { academicTerms: academicTermCreated._id } }
+		{
+			_id: req.user._id,
+		},
+		{
+			$push: {
+				academicTerms: academicTermCreated._id,
+			},
+		}
 	);
 
 	res.status(201).json(
@@ -141,9 +148,8 @@ export const updateAcademicTerm = AsyncHandler(async (req, res) => {
 
 export const deleteAcademicTerm = AsyncHandler(async (req, res) => {
 	const id = req.params.id;
-	const academicTerm = await AcademicTerm.findByIdAndDelete(
-		id
-	).select('name -_id');
+	const academicTerm =
+		await AcademicTerm.findByIdAndDelete(id).select('name -_id');
 
 	if (!academicTerm) {
 		throw new ApiError(404, 'Academic term not found');

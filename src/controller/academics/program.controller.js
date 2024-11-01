@@ -3,8 +3,10 @@ import Admin from '../../model/Staff/Admin.model.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 import Program from '../../model/Academic/Program.model.js';
 import ApiError from '../../utils/ApiError.js';
-import { createProgramSchema, updateProgramSchema, } from '../../utils/Validation/program.schema.js';
-
+import {
+	createProgramSchema,
+	updateProgramSchema,
+} from '../../utils/Validation/program.schema.js';
 
 //* @ desc Create a new Program
 //* @ route POST /api/v1/academics/programs
@@ -39,9 +41,15 @@ export const createProgram = AsyncHandler(async (req, res) => {
 	// Add the program to the admin's list of programs
 
 	await Admin.updateOne(
-		{ _id: createdBy },
-		{ $push: { programs: createdProgram._id } }
-	)
+		{
+			_id: createdBy,
+		},
+		{
+			$push: {
+				programs: createdProgram._id,
+			},
+		}
+	);
 
 	res.status(201).json(
 		new ApiResponse(
@@ -63,7 +71,10 @@ export const getPrograms = AsyncHandler(async (req, res) => {
 
 	const total = programs.length;
 	res.status(200).json(
-		new ApiResponse(200, 'Programs fetched successfully', {programs , total})
+		new ApiResponse(200, 'Programs fetched successfully', {
+			programs,
+			total,
+		})
 	);
 });
 
@@ -110,7 +121,10 @@ export const updateProgram = AsyncHandler(async (req, res) => {
 
 	const updatedProgram = await Program.findByIdAndUpdate(
 		req.params.id,
-		{ name, description },
+		{
+			name,
+			description,
+		},
 		{ new: true }
 	);
 

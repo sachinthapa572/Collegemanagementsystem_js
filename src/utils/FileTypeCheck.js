@@ -18,6 +18,8 @@ export async function fileTypeCheck(req) {
 			});
 		}
 	} catch (error) {
-		res.status(500).json({ message: 'Error processing file.' });
+		res.status(500).json({
+			message: 'Error processing file.',
+		});
 	}
 }

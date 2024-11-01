@@ -12,10 +12,12 @@ const subjectSchema = new Schema(
 			required: true,
 			trim: true,
 		},
-		teacher: [{
-			type: Schema.Types.ObjectId,
-			ref: 'Teacher',
-		}],
+		teacher: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Teacher',
+			},
+		],
 		createdBy: {
 			type: Schema.Types.ObjectId,
 			ref: 'Admin',
@@ -43,7 +45,6 @@ const subjectSchema = new Schema(
 			ref: 'Program',
 			required: true,
 		},
-
 	},
 	{ timestamps: true }
 );
@@ -66,7 +67,6 @@ const subjectSchema = new Schema(
 
 // 	next();
 // });
-
 
 const Subject = model('Subject', subjectSchema);
 

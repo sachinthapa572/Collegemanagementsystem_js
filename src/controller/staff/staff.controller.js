@@ -17,7 +17,6 @@ import {
 	updateAdminSchema,
 } from '../../utils/Validation/admin.schema.js';
 
-
 //* @desc Register a new Admin
 //* @route POST /api/v1/admin/register
 //* @access Private
@@ -31,7 +30,14 @@ export const RegisterAdminController = AsyncHandler(
 			throw new ApiError(400, 'Please upload an image');
 		}
 		const existedUser = await Admin.findOne({
-			$or: [{ email }, { username }],
+			$or: [
+				{
+					email,
+				},
+				{
+					username,
+				},
+			],
 		});
 
 		if (existedUser) {
@@ -40,7 +46,10 @@ export const RegisterAdminController = AsyncHandler(
 		}
 
 		// upload image to cloudinary
-		const userImage = await uploadOnCloudinary(avatarLocalPath);
+		const userImage = await uploadOnCloudinary(
+			avatarLocalPath,
+			'Admins'
+		);
 		if (!userImage?.url) {
 			removeMulterUploadFiles(avatarLocalPath);
 			throw new ApiError(
@@ -98,32 +107,42 @@ export const LoginAdminController = AsyncHandler(async (req, res) => {
 	}
 
 	// check if the password match
-	const isPasswordValid = await currentUser.isPasswordCorrect(
-		password
-	);
+	const isPasswordValid =
+		await currentUser.isPasswordCorrect(password);
 	if (!isPasswordValid) {
 		throw new ApiError(401, 'Invalid credentials');
 	}
 
 	const { refreshToken, accessToken } =
-		await generateAccessTokenAndRefreshToken(currentUser._id);
+		await generateAccessTokenAndRefreshToken(
+			Admin,
+			currentUser._id
+		);
 
 	let loginAdminDetails = await Admin.findById(currentUser._id)
 		.select('-password -refreshToken')
 		.populate([
-			{ path: 'academicYears' },
-			{ path: 'classLevels' },
-			{ path: 'academicTerms' },
+			{
+				path: 'academicYears',
+			},
+			{
+				path: 'classLevels',
+			},
+			{
+				path: 'academicTerms',
+			},
 		])
-		.sort({ createdAt: -1 });
+		.sort({
+			createdAt: -1,
+		});
 
-	//! pachi delete hane (Bearer token) send garda yesto format ma send garne token 
+	//! pachi delete hane (Bearer token) send garda yesto format ma send garne token
 
 	loginAdminDetails = {
 		...loginAdminDetails._doc,
 		accessToken: `Bearer ${accessToken}`,
 		refreshToken: `Bearer ${refreshToken}`,
-	}
+	};
 	return res
 		.status(200)
 		.cookie('accessToken', accessToken, cookiesOptions)
@@ -137,6 +156,22 @@ export const LoginAdminController = AsyncHandler(async (req, res) => {
 		);
 });
 
+//* @desc Logout Admin
+//* @route POST /api/v1/admin/logout
+//* @access Private
+
+export const LogoutAdminController = AsyncHandler(
+	async (req, res) => {
+		res.clearCookie('accessToken');
+		res.clearCookie('refreshToken');
+		return res
+			.status(200)
+			.json(
+				new ApiResponse(200, {}, 'Admin logged out successfully')
+			);
+	}
+);
+
 //* @desc Get all Admins
 //* @route GET /api/v1/admin
 //* @access Private
@@ -146,19 +181,24 @@ export const GetAllAdminsController = AsyncHandler(async (_, res) => {
 		.select('-password -refreshToken')
 		.populate({
 			path: 'academicYears',
-			options: { sort: { createdAt: -1 } },
+			options: {
+				sort: {
+					createdAt: -1,
+				},
+			},
 		});
 	const total = await Admin.countDocuments({});
 
-	return res
-		.status(200)
-		.json(
-			new ApiResponse(
-				200,
-				{ total, admins: Admins },
-				'All Admins fetched successfully'
-			)
-		);
+	return res.status(200).json(
+		new ApiResponse(
+			200,
+			{
+				total,
+				admins: Admins,
+			},
+			'All Admins fetched successfully'
+		)
+	);
 });
 
 //* @desc Get a specific Admin
@@ -171,7 +211,11 @@ export const GetSpecificAdminController = AsyncHandler(
 			.select('-password -refreshToken')
 			.populate({
 				path: 'academicYears',
-				options: { sort: { createdAt: -1 } },
+				options: {
+					sort: {
+						createdAt: -1,
+					},
+				},
 			}); // show the actual data of the academic year
 
 		return res
@@ -196,7 +240,11 @@ export const GetSingleAdminController = AsyncHandler(
 			.select('-password -refreshToken')
 			.populate({
 				path: 'academicYears',
-				options: { sort: { createdAt: -1 } },
+				options: {
+					sort: {
+						createdAt: -1,
+					},
+				},
 			});
 
 		if (!CurrentAdmin) {
@@ -248,7 +296,8 @@ export const UpdateAdminController = AsyncHandler(
 		// Upload new image to Cloudinary if an image is provided
 		if (avatarLocalPath) {
 			const uploadedImage = await uploadOnCloudinary(
-				avatarLocalPath
+				avatarLocalPath,
+				'Admins'
 			);
 			if (!uploadedImage?.url) {
 				removeMulterUploadFiles(avatarLocalPath);
@@ -298,12 +347,19 @@ export const UpdateAdminController = AsyncHandler(
 					userImage,
 				},
 			},
-			{ new: true, runValidators: true }
+			{
+				new: true,
+				runValidators: true,
+			}
 		)
 			.select('-password -refreshToken')
 			.populate({
 				path: 'academicYears',
-				options: { sort: { createdAt: -1 } },
+				options: {
+					sort: {
+						createdAt: -1,
+					},
+				},
 			});
 
 		if (!updatedAdmin) {

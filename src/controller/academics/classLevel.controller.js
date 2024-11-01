@@ -3,9 +3,10 @@ import Admin from '../../model/Staff/Admin.model.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
 import ClassLevel from '../../model/Academic/ClassLevel.model.js';
 import ApiError from '../../utils/ApiError.js';
-import { createClassLevelSchema, updateClassLevelSchema } from '../../utils/Validation/classLevel.schema.js';
-
-
+import {
+	createClassLevelSchema,
+	updateClassLevelSchema,
+} from '../../utils/Validation/classLevel.schema.js';
 
 //* @ desc Create a new class level
 //* @ route POST /api/v1/academics/class-level
@@ -111,7 +112,10 @@ export const updateClassLevel = AsyncHandler(async (req, res) => {
 
 	const updatedClassLevel = await ClassLevel.findByIdAndUpdate(
 		req.params.id,
-		{ name, description },
+		{
+			name,
+			description,
+		},
 		{ new: true }
 	);
 

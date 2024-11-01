@@ -6,16 +6,16 @@ import Admin from '../../model/Staff/Admin.model.js';
 import {
 	createAcademicYearSchema,
 	updateAcademicYearSchema,
-
 } from '../../utils/Validation/academicYear.schema.js';
-
 
 //*	@ desc Create a new academic year
 //*	@ route POST /api/v1/academics/academic-year
 //*	@ access Private
 
 export const createAcademicYear = AsyncHandler(async (req, res) => {
-	const { fromYear, toYear, name } = createAcademicYearSchema.parse(req.body);
+	const { fromYear, toYear, name } = createAcademicYearSchema.parse(
+		req.body
+	);
 	const createdBy = req.user._id;
 
 	const academicYear = await AcademicYear.findOne({ name });
@@ -36,9 +36,15 @@ export const createAcademicYear = AsyncHandler(async (req, res) => {
 	// admin.academicYears.push(academicYearCreated._id);
 
 	await Admin.updateOne(
-		{ _id: req.user._id },
-		{ $push: { academicYears: academicYearCreated._id } }
-	)
+		{
+			_id: req.user._id,
+		},
+		{
+			$push: {
+				academicYears: academicYearCreated._id,
+			},
+		}
+	);
 
 	res.status(201).json(
 		new ApiResponse(
@@ -60,10 +66,10 @@ export const getAcademicYears = AsyncHandler(async (req, res) => {
 	const count = await AcademicYear.countDocuments();
 
 	res.status(200).json(
-		new ApiResponse(
-			'Academic years fetched successfully',
-			{ academicYears, total: count }
-		)
+		new ApiResponse('Academic years fetched successfully', {
+			academicYears,
+			total: count,
+		})
 	);
 });
 
@@ -72,7 +78,6 @@ export const getAcademicYears = AsyncHandler(async (req, res) => {
 //* @ access Private
 
 export const getAcademicYearById = AsyncHandler(async (req, res) => {
-
 	if (!req.params.id) {
 		throw new ApiError(400, 'Please provide an id');
 	}
@@ -100,7 +105,9 @@ export const updateAcademicYear = AsyncHandler(async (req, res) => {
 	if (!req.params.id) {
 		throw new ApiError(400, 'Please provide an id');
 	}
-	let { fromYear, toYear, name } = updateAcademicYearSchema.parse(req.body);
+	let { fromYear, toYear, name } = updateAcademicYearSchema.parse(
+		req.body
+	);
 
 	const AcademicYearExist = await AcademicYear.findById(
 		req.params.id
@@ -110,14 +117,19 @@ export const updateAcademicYear = AsyncHandler(async (req, res) => {
 	}
 
 	const updatedBy = req.user._id;
-	name = name !== undefined
-		? name
-		: `${fromYear !== undefined ? fromYear : AcademicYearExist.fromYear}-${toYear !== undefined ? toYear : AcademicYearExist.toYear}`;
-	fromYear = fromYear !== undefined ? fromYear : AcademicYearExist.fromYear
-	toYear = toYear !== undefined ? toYear : AcademicYearExist.toYear
+	name =
+		name !== undefined
+			? name
+			: `${fromYear !== undefined ? fromYear : AcademicYearExist.fromYear}-${toYear !== undefined ? toYear : AcademicYearExist.toYear}`;
+	fromYear =
+		fromYear !== undefined ? fromYear : AcademicYearExist.fromYear;
+	toYear = toYear !== undefined ? toYear : AcademicYearExist.toYear;
 
 	if (fromYear >= toYear) {
-		throw new ApiError(400, 'The first year must be less than the second year');
+		throw new ApiError(
+			400,
+			'The first year must be less than the second year'
+		);
 	}
 
 	const academicYear = await AcademicYear.findOne({ name });
@@ -132,7 +144,6 @@ export const updateAcademicYear = AsyncHandler(async (req, res) => {
 		toYear,
 		updatedBy,
 	};
-
 
 	const academicYearUpdated = await AcademicYear.findByIdAndUpdate(
 		req.params.id,

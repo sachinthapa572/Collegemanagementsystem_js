@@ -5,6 +5,7 @@ import {
 	GetSingleAdminController,
 	GetSpecificAdminController,
 	LoginAdminController,
+	LogoutAdminController,
 	PublishExamsController,
 	RegisterAdminController,
 	SuspendTeacherController,
@@ -33,8 +34,15 @@ adminRouter
 // login the admin
 adminRouter.route('/login').post(LoginAdminController);
 
+// logout the admin
+adminRouter
+	.route('/logout')
+	.post(isAuth(Admin), LogoutAdminController);
+
 // get all admins
-adminRouter.route('/').get(isAuth(Admin), isAdmin, GetAllAdminsController);
+adminRouter
+	.route('/')
+	.get(isAuth(Admin), isAdmin, GetAllAdminsController);
 
 // get a specific  admin info
 adminRouter
@@ -57,34 +65,71 @@ adminRouter
 // delete admin account
 adminRouter
 	.route('/:id')
-	.delete(isAuth(Admin), isAdmin, validateObjectId, DeleteAdminController);
+	.delete(
+		isAuth(Admin),
+		isAdmin,
+		validateObjectId,
+		DeleteAdminController
+	);
 
 // suspend teacher account
 adminRouter
 	.route('/suspend/teacher/:id')
-	.put(isAuth(Admin), isAdmin, validateObjectId, SuspendTeacherController);
+	.put(
+		isAuth(Admin),
+		isAdmin,
+		validateObjectId,
+		SuspendTeacherController
+	);
 
 // unsuspend teacher account
 adminRouter
 	.route('/unsuspend/teacher/:id')
-	.put(isAuth(Admin), isAdmin, validateObjectId, UnsuspendTeacherController);
+	.put(
+		isAuth(Admin),
+		isAdmin,
+		validateObjectId,
+		UnsuspendTeacherController
+	);
 
 // withdraw teacher
 adminRouter
 	.route('/withdraw/teacher/:id')
-	.put(isAuth(Admin), isAdmin, validateObjectId, WithdrawTeacherController);
+	.put(
+		isAuth(Admin),
+		isAdmin,
+		validateObjectId,
+		WithdrawTeacherController
+	);
 
 // unwithdraw teacher
 adminRouter
 	.route('/unwithdraw/teacher/:id')
-	.put(isAuth(Admin), isAdmin, validateObjectId, UnwithdrawTeacherController);
+	.put(
+		isAuth(Admin),
+		isAdmin,
+		validateObjectId,
+		UnwithdrawTeacherController
+	);
 
 // publish exams
-adminRouter.route('/publish/exams/:id').put(isAuth(Admin), isAdmin, validateObjectId, PublishExamsController);
+adminRouter
+	.route('/publish/exams/:id')
+	.put(
+		isAuth(Admin),
+		isAdmin,
+		validateObjectId,
+		PublishExamsController
+	);
 
 // unpublish exams
 adminRouter
 	.route('/unpublish/exams/:id')
-	.put(isAuth(Admin), isAdmin, validateObjectId, UnpublishExamsController);
+	.put(
+		isAuth(Admin),
+		isAdmin,
+		validateObjectId,
+		UnpublishExamsController
+	);
 
 export default adminRouter;

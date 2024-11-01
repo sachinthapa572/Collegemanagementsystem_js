@@ -31,7 +31,10 @@ const globalErrHandler = (err, req, res, next) => {
 	if (err instanceof z.ZodError) {
 		const errors = err.errors.map((error) => {
 			const { path, message } = error;
-			return { path, message };
+			return {
+				path,
+				message,
+			};
 		});
 
 		err = new ApiError(

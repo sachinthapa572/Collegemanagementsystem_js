@@ -2,7 +2,7 @@ import { environmentVariables } from '../constant.js';
 import ApiError from '../utils/ApiError.js';
 import jwt from 'jsonwebtoken';
 
-const verifyJWT = model => {
+const verifyJWT = (model) => {
 	return async (req, _, next) => {
 		try {
 			const token =
@@ -26,13 +26,16 @@ const verifyJWT = model => {
 				environmentVariables.ACCESS_TOKEN_SECRET
 			);
 			const _id = decodedToken?._id;
-			const user = await model.findById(_id).select(
-				'-password -refreshToken'
-			);
+			const user = await model
+				.findById(_id)
+				.select('-password -refreshToken');
 
 			if (!user) {
 				return next(
-					new ApiError(401, 'Unauthorized request: User not found')
+					new ApiError(
+						401,
+						'Unauthorized request: User not found'
+					)
 				);
 			}
 
@@ -53,6 +56,6 @@ const verifyJWT = model => {
 			return next(new ApiError(500, 'Internal Server Error'));
 		}
 	};
-}
+};
 
 export { verifyJWT as isAuth };

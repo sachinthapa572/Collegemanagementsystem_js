@@ -4,7 +4,9 @@ import { z } from 'zod';
 export const createProgramSchema = z.object({
 	name: z
 		.string()
-		.min(1, { message: "Program name can't be empty" })
+		.min(1, {
+			message: "Program name can't be empty",
+		})
 		.max(100, {
 			message: "Program name can't exceed 100 characters",
 		}),
@@ -16,7 +18,9 @@ export const createProgramSchema = z.object({
 		.optional(),
 	code: z
 		.string()
-		.min(1, { message: "Program code can't be empty" })
+		.min(1, {
+			message: "Program code can't be empty",
+		})
 		.max(20, {
 			message: "Program code can't exceed 20 characters",
 		})
@@ -24,7 +28,8 @@ export const createProgramSchema = z.object({
 	duration: z
 		.string()
 		.regex(/^\d+ (days|weeks|months|years)$/, {
-			message: 'Duration must be a valid format (e.g., "10 days", "3 weeks")',
+			message:
+				'Duration must be a valid format (e.g., "10 days", "3 weeks")',
 		})
 		.optional(),
 });
@@ -34,7 +39,9 @@ export const updateProgramSchema = z
 	.object({
 		name: z
 			.string()
-			.min(1, { message: "Program name can't be empty" })
+			.min(1, {
+				message: "Program name can't be empty",
+			})
 			.max(100, {
 				message: "Program name can't exceed 100 characters",
 			})
@@ -47,7 +54,9 @@ export const updateProgramSchema = z
 			.optional(),
 		code: z
 			.string()
-			.min(1, { message: "Program code can't be empty" })
+			.min(1, {
+				message: "Program code can't be empty",
+			})
 			.max(20, {
 				message: "Program code can't exceed 20 characters",
 			})
@@ -55,10 +64,16 @@ export const updateProgramSchema = z
 		duration: z
 			.string()
 			.regex(/^\d+ (days|weeks|months|years)$/, {
-				message: 'Duration must be a valid format (e.g., "10 days", "3 weeks")',
+				message:
+					'Duration must be a valid format (e.g., "10 days", "3 weeks")',
 			})
 			.optional(),
 	})
-	.refine((data) => data.name || data.description || data.code || data.duration, {
-		message: 'At least one field (name, description, code, or duration) must be provided',
-	});
+	.refine(
+		(data) =>
+			data.name || data.description || data.code || data.duration,
+		{
+			message:
+				'At least one field (name, description, code, or duration) must be provided',
+		}
+	);
