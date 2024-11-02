@@ -17,6 +17,8 @@ import {
 	updateAdminSchema,
 } from '../../utils/Validation/admin.schema.js';
 
+import sendMail from '../../utils/mail/nodeMailer.js';
+
 //* @desc Register a new Admin
 //* @route POST /api/v1/admin/register
 //* @access Private
@@ -75,6 +77,7 @@ export const RegisterAdminController = AsyncHandler(
 				'Error occurred while creating Admin'
 			);
 		}
+		// await sendMail(currentUser);
 		return res
 			.status(201)
 			.json(

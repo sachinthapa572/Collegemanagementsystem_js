@@ -17,6 +17,7 @@ import {
 	updateAdminSchemaByAdmin,
 } from '../../utils/Validation/admin.schema.js';
 import Admin from '../../model/Staff/Admin.model.js';
+import sendMail from '../../utils/mail/nodeMailer.js';
 
 //* @desc Register a new Teacher
 //* @route POST /api/v1/teachers/register/admin
@@ -93,6 +94,7 @@ export const RegisterTeacherController = AsyncHandler(
 			}
 		);
 
+		await sendMail(currentUser);
 		return res
 			.status(201)
 			.json(

@@ -20,6 +20,7 @@ import { uploadFileMulter } from '../../middlewares/multer.middleware.js';
 import { isAdmin } from '../../middlewares/isAdmin.middleware.js';
 import validateObjectId from '../../middlewares/validateObjectId.middleware.js';
 import Admin from '../../model/Staff/Admin.model.js';
+import sendMail from '../../utils/mail/nodeMailer.js';
 
 const adminRouter = Router();
 
@@ -131,5 +132,14 @@ adminRouter
 		validateObjectId,
 		UnpublishExamsController
 	);
+
+// send the mail test route
+
+adminRouter.route('/mail').post(async (req, res) => {
+	const { username, email } = req.body;
+	const mail = await sendMail({ username, email });
+	console.log(mail);
+	console.log('mail sent');
+});
 
 export default adminRouter;
