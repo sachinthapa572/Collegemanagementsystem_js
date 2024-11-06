@@ -8,23 +8,23 @@ import {
 	deleteSubject,
 	getSubjects,
 	updateSubject,
-} from '../../controller/academics/courses.controller.js';
+} from '../../controller/academics/subject.controller.js';
 
-const courseRouter = Router();
+const subjectRouter = Router();
 
-courseRouter.use(isAuth(Admin), roleRestriction('admin'));
+subjectRouter.use(isAuth(Admin), roleRestriction('admin'));
 
-courseRouter
+subjectRouter
 	.route('/:programId')
 	.post(createSubject)
 	.get(getSubjects);
 
-courseRouter
+subjectRouter
 	.route('/:programId')
 	.put(validateObjectId, updateSubject)
 	.delete(validateObjectId, deleteSubject);
 
-export default courseRouter;
+export default subjectRouter;
 
 //* @ route POST /api/v1/academics/subject/:programId
 //* @ route GET /api/v1/academics/subjects/:programId?academicTerm=termId&academicYear=year&subjectId=subjectId

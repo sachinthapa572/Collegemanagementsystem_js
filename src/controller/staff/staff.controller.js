@@ -2,7 +2,7 @@ import AsyncHandler from 'express-async-handler';
 import Admin from '../../model/Staff/Admin.model.js';
 import ApiError from '../../utils/ApiError.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
-import { generateAccessTokenAndRefreshToken } from '../../utils/GenerateToken.js';
+import { generateAccessTokenAndRefreshToken } from '../../utils/authTokenGenerator.js';
 import { cookiesOptions } from '../../constant.js';
 import {
 	deleteFromCloudinary,
@@ -18,6 +18,8 @@ import {
 } from '../../utils/Validation/admin.schema.js';
 
 import sendMail from '../../utils/mail/nodeMailer.js';
+import { restoreFromBackup } from '../../utils/backupUtils.js';
+import Backup from '../../model/BackUp/backUp.js';
 
 //* @desc Register a new Admin
 //* @route POST /api/v1/admin/register
@@ -472,3 +474,36 @@ export const UnpublishExamsController = (req, res) => {
 		message: 'Admin route',
 	});
 };
+
+//* @desc restore from backup
+//* @route POST /api/v1/admin/restore/:backupId
+//* @access Private
+
+export const RestoreFromBackupController = AsyncHandler(
+	async (req, _, next) => {
+		restoreFromBackup(req.params.id, next);
+	}
+);
+
+//* @desc get all backups details
+//* @route GET /api/v1/admin/backupdetails
+//* @access Private
+
+export const GetBackupDetailsController = AsyncHandler(
+	async (_, res) => {
+		const backups = await Backup.find({}).sort({
+			createdAt: -1,
+		});
+		const total = await Backup.countDocuments({});
+		return res.status(200).json(
+			new ApiResponse(
+				200,
+				{
+					total,
+					backups,
+				},
+				'All backups fetched successfully'
+			)
+		);
+	}
+);

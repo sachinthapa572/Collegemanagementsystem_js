@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import Teacher from '../../model/Staff/Teacher.model.js';
 import ApiError from '../../utils/ApiError.js';
 import { ApiResponse } from '../../utils/ApiResponse.js';
-import { generateAccessTokenAndRefreshToken } from '../../utils/GenerateToken.js';
+import { generateAccessTokenAndRefreshToken } from '../../utils/authTokenGenerator.js';
 import { cookiesOptions } from '../../constant.js';
 import {
 	deleteFromCloudinary,
@@ -94,7 +94,7 @@ export const RegisterTeacherController = AsyncHandler(
 			}
 		);
 
-		await sendMail(currentUser);
+		// await sendMail(currentUser);
 		return res
 			.status(201)
 			.json(
