@@ -1,3 +1,5 @@
+import ApiError from './utils/ApiError.js';
+
 export const environmentVariables = Object.freeze({
 	PORT: Number(process.env.PORT),
 	NODE_ENV: String(process.env.NODE_ENV),
@@ -33,4 +35,23 @@ export const allowedTypesFileTypes = Object.freeze([
 	'image/jpeg',
 	'image/png',
 	'image/jpg',
+]);
+
+const allowedOrigins = Object.freeze(['http://localhost:3000']);
+
+export const corsOptions = Object.freeze({
+	origin: function (origin, callback) {
+		if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+			callback(null, true);
+		} else {
+			callback(new ApiError('Not allowed by CORS'));
+		}
+	},
+	credentials: true,
+});
+
+export const examState = Object.freeze([
+	'ongoing',
+	'completed',
+	'cancelled',
 ]);

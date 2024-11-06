@@ -49,25 +49,5 @@ const subjectSchema = new Schema(
 	{ timestamps: true }
 );
 
-// // Remove the subject from the program's list of courses when the subject is deleted
-// subjectSchema.pre('findOneAndDelete', async function (next) {
-
-// 	const filter = this.getQuery();
-
-// 	// Find the subject document that matches this filter
-// 	const subject = await this.model.findOne(filter);
-
-// 	// Do something with the retrieved subject, e.g., remove references from other documents
-// 	if (subject) {
-// 		await Program.updateOne(
-// 			{ _id: subject.program },
-// 			{ $pull: { courses: subject._id } }
-// 		);
-// 	}
-
-// 	next();
-// });
-
 const Subject = model('Subject', subjectSchema);
-
 export default Subject;

@@ -40,7 +40,7 @@ const examSchema = new Schema(
 		duration: {
 			type: String,
 			required: true,
-			default: '3 hours',
+			default: '3', // 3 hours
 		},
 		examDate: {
 			type: Date,
@@ -51,16 +51,23 @@ const examSchema = new Schema(
 			type: String,
 			required: true,
 		},
+		endTime: {
+			type: String,
+			required: true,
+		},
 		examType: {
 			type: String,
 			required: true,
-			default: 'Quiz',
+			default: 'MCQ',
 		},
 		examStatus: {
 			type: String,
 			required: true,
 			default: 'pending',
-			enum: ['pending', 'live'],
+			enum: {
+				values: ['pending', 'ongoing', 'completed', 'cancelled'],
+				message: 'Exam status must be either pending, ongoing, or completed , cancelle',
+			},
 		},
 		questions: [
 			{
