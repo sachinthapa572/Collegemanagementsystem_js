@@ -12,17 +12,8 @@ export const createSubjectSchema = z.object({
 	academicTerm: z
 		.string()
 		.min(1, 'Academic term ID is required')
-		.regex(
-			/^[A-Za-z0-9-]+$/,
-			'Academic term ID must be alphanumeric'
-		),
-	academicYear: z
-		.string()
-		.regex(
-			/^\d{4}-\d{4}$/,
-			'Academic year must be in the format YYYY-YYYY'
-		)
 		.optional(),
+	academicYear: z.string().optional(),
 });
 
 export const updateSubjectSchema = z
