@@ -2,12 +2,14 @@ import { Router } from 'express';
 import {
 	DeleteAdminController,
 	GetAllAdminsController,
+	GetBackupDetailsController,
 	GetSingleAdminController,
 	GetSpecificAdminController,
 	LoginAdminController,
 	LogoutAdminController,
 	PublishExamsController,
 	RegisterAdminController,
+	RestoreFromBackupController,
 	SuspendTeacherController,
 	UnpublishExamsController,
 	UnsuspendTeacherController,
@@ -20,7 +22,6 @@ import { uploadFileMulter } from '../../middlewares/multer.middleware.js';
 import { isAdmin } from '../../middlewares/isAdmin.middleware.js';
 import validateObjectId from '../../middlewares/validateObjectId.middleware.js';
 import Admin from '../../model/Staff/Admin.model.js';
-import sendMail from '../../utils/mail/nodeMailer.js';
 
 const adminRouter = Router();
 
@@ -133,13 +134,17 @@ adminRouter
 		UnpublishExamsController
 	);
 
-// send the mail test route
+adminRouter
+	.route('/backup/:id')
+	.get(
+		isAuth(Admin),
+		isAdmin,
+		validateObjectId,
+		RestoreFromBackupController
+	);
 
-adminRouter.route('/mail').post(async (req, res) => {
-	const { username, email } = req.body;
-	const mail = await sendMail({ username, email });
-	console.log(mail);
-	console.log('mail sent');
-});
+adminRouter
+	.route('/backupdetails')
+	.get(isAuth(Admin), isAdmin, GetBackupDetailsController);
 
 export default adminRouter;
