@@ -10,7 +10,6 @@ import {
 	GetSingleTeacherController,
 	LoginTeacherController,
 	LogoutTeacherController,
-	RefreshTeacherTokenController,
 	RegisterTeacherController,
 	UpdateTeacherController,
 	UpdateTeacherControllerByAdmin,
