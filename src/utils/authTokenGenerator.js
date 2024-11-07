@@ -1,11 +1,14 @@
 import ApiError from './ApiError.js';
 
-const generateAccessTokenAndRefreshToken = async (model, userId) => {
-	console.log('model', model);
+const generateAccessTokenAndRefreshToken = async (
+	model,
+	userId,
+	next
+) => {
 	try {
 		const user = await model.findById(userId);
 		if (!user) {
-			throw new ApiError(404, 'User not found');
+			next(new ApiError(404, 'User not found'));
 		}
 		const accessToken = user.generateAccessToken();
 		const refreshToken = user.generateRefreshToken();
@@ -20,9 +23,8 @@ const generateAccessTokenAndRefreshToken = async (model, userId) => {
 			accessToken,
 		};
 	} catch (error) {
-		throw new ApiError(
-			500,
-			'Error occurred while generating token'
+		next(
+			new ApiError(500, 'Error occurred while generating token')
 		);
 	}
 };

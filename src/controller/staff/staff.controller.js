@@ -96,70 +96,73 @@ export const RegisterAdminController = AsyncHandler(
 //* @route POST /api/v1/admin/login
 //* @access Private
 
-export const LoginAdminController = AsyncHandler(async (req, res) => {
-	// const { email, password } = req.body;
-	const parsedBody = loginAdminSchema.parse(req.body);
-	const { email, password } = parsedBody;
+export const LoginAdminController = AsyncHandler(
+	async (req, res, next) => {
+		// const { email, password } = req.body;
+		const parsedBody = loginAdminSchema.parse(req.body);
+		const { email, password } = parsedBody;
 
-	if (!email || !password) {
-		throw new ApiError(400, 'Please provide email and password');
+		if (!email || !password) {
+			throw new ApiError(400, 'Please provide email and password');
+		}
+
+		// check if the admin exist in the database
+		const currentUser = await Admin.findOne({ email });
+		if (!currentUser) {
+			throw new ApiError(404, "Email doesn't exist ");
+		}
+
+		// check if the password match
+		const isPasswordValid =
+			await currentUser.isPasswordCorrect(password);
+		if (!isPasswordValid) {
+			throw new ApiError(401, 'Invalid credentials');
+		}
+
+		const { refreshToken, accessToken } =
+			await generateAccessTokenAndRefreshToken(
+				Admin,
+				currentUser._id,
+				next
+			);
+
+		let loginAdminDetails = await Admin.findById(currentUser._id)
+			.select('-password -refreshToken')
+			.populate([
+				{
+					path: 'academicYears',
+				},
+				{
+					path: 'classLevels',
+				},
+				{
+					path: 'academicTerms',
+				},
+			])
+			.sort({
+				createdAt: -1,
+			});
+
+		//! pachi delete hane (Bearer token) send garda yesto format ma send garne token
+
+		loginAdminDetails = {
+			...loginAdminDetails._doc,
+			accessToken: `Bearer ${accessToken}`,
+			refreshToken: `Bearer ${refreshToken}`,
+		};
+		return res
+			.status(200)
+			.cookie('accessToken', accessToken, cookiesOptions)
+			.cookie('refreshToken', refreshToken, cookiesOptions)
+			.json(
+				new ApiResponse(
+					200,
+					loginAdminDetails,
+					'Admin logged in successfully'
+				)
+			);
 	}
-
-	// check if the admin exist in the database
-	const currentUser = await Admin.findOne({ email });
-	if (!currentUser) {
-		throw new ApiError(404, "Email doesn't exist ");
-	}
-
-	// check if the password match
-	const isPasswordValid =
-		await currentUser.isPasswordCorrect(password);
-	if (!isPasswordValid) {
-		throw new ApiError(401, 'Invalid credentials');
-	}
-
-	const { refreshToken, accessToken } =
-		await generateAccessTokenAndRefreshToken(
-			Admin,
-			currentUser._id
-		);
-
-	let loginAdminDetails = await Admin.findById(currentUser._id)
-		.select('-password -refreshToken')
-		.populate([
-			{
-				path: 'academicYears',
-			},
-			{
-				path: 'classLevels',
-			},
-			{
-				path: 'academicTerms',
-			},
-		])
-		.sort({
-			createdAt: -1,
-		});
-
-	//! pachi delete hane (Bearer token) send garda yesto format ma send garne token
-
-	loginAdminDetails = {
-		...loginAdminDetails._doc,
-		accessToken: `Bearer ${accessToken}`,
-		refreshToken: `Bearer ${refreshToken}`,
-	};
-	return res
-		.status(200)
-		.cookie('accessToken', accessToken, cookiesOptions)
-		.cookie('refreshToken', refreshToken, cookiesOptions)
-		.json(
-			new ApiResponse(
-				200,
-				loginAdminDetails,
-				'Admin logged in successfully'
-			)
-		);
-});
+);
 
 //* @desc Logout Admin
 //* @route POST /api/v1/admin/logout
@@ -481,6 +484,23 @@ export const UnpublishExamsController = (req, res) => {
 
 export const RestoreFromBackupController = AsyncHandler(
 	async (req, _, next) => {
+		const { backupId } = req.params;
+
+		const admin = await Admin.findById(req.user._id);
+
+		//! pachi  superadmin role check garna its for the testing purpose
+		if (!admin) {
+			throw new ApiError(404, 'Admin not found');
+		}
+
+		// if (admin.role !== 'superadmin') {
+		// 	throw new ApiError(403, 'Unauthorized access');
+		// }
+		
+		if (admin.email !== 'thapasachin572@gmail.com') {
+			throw new ApiError(403, 'Unauthorized access');
+		}
+
 		restoreFromBackup(req.params.id, next);
 	}
 );

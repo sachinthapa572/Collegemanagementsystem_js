@@ -37,7 +37,10 @@ export const allowedTypesFileTypes = Object.freeze([
 	'image/jpg',
 ]);
 
-const allowedOrigins = Object.freeze(['http://localhost:3000']);
+const allowedOrigins = Object.freeze([
+	'http://localhost:3000',
+	'http://localhost:5137',
+]);
 
 export const corsOptions = Object.freeze({
 	origin: function (origin, callback) {
@@ -55,3 +58,16 @@ export const examState = Object.freeze([
 	'completed',
 	'cancelled',
 ]);
+
+export const rateLimitOptions = Object.freeze({
+	windowMs: 15 * 60 * 1000,
+	limit: 100,
+	standardHeaders: 'draft-7',
+	legacyHeaders: false,
+});
+
+export const roles = Object.freeze({
+	ADMIN: 'Admin',
+	TEACHER: 'Teacher',
+	STUDENT: 'Student',
+});

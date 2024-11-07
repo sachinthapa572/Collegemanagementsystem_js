@@ -127,7 +127,7 @@ teacherSchema.methods.generateAccessToken = function () {
 		},
 		environmentVariables.ACCESS_TOKEN_SECRET,
 		{
-			expiresIn: environmentVariables.REFRESH_TOKEN_EXPIRES_IN,
+			expiresIn: environmentVariables.ACCESS_TOKEN_EXPIRES_IN,
 		}
 	);
 };
@@ -139,9 +139,9 @@ teacherSchema.methods.generateRefreshToken = function () {
 			username: this.username,
 			role: this.role,
 		},
-		environmentVariables.ACCESS_TOKEN_SECRET,
+		environmentVariables.REFRESH_TOKEN_SECRET,
 		{
-			expiresIn: environmentVariables.ACCESS_TOKEN_EXPIRES_IN,
+			expiresIn: environmentVariables.REFRESH_TOKEN_EXPIRES_IN,
 		}
 	);
 };

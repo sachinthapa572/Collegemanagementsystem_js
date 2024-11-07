@@ -1,26 +1,23 @@
 import express from 'express';
 import dotenv from 'dotenv/config';
-import cron from 'node-cron';
+import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import { rateLimit } from 'express-rate-limit';
+import cron from 'node-cron';
+
 import {
 	globalErrHandler,
 	notFoundErr,
 } from '../middlewares/globalErrHandler.middleware.js';
 import routes from '../routes/routes.js';
 import retryFailedEmails from '../utils/mail/retryFailedEmails.js';
-import cors from 'cors';
-import { rateLimit } from 'express-rate-limit';
-import { corsOptions } from '../constant.js';
+import { corsOptions, rateLimitOptions } from '../constant.js';
+import refreshTokenMiddleware from '../middlewares/refreshToken.middleware.js';
 
 const app = express();
 
-const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
-	limit: 100,
-	standardHeaders: 'draft-7',
-	legacyHeaders: false,
-});
+
 
 //==> middlewares <==//
 app.use(morgan('dev'));
@@ -37,8 +34,11 @@ app.use(
 );
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(limiter);
+app.use(rateLimit(rateLimitOptions));
 app.use(express.static('public'));
+
+//==>  Add token refresh middleware before the routes <==//
+app.use(refreshTokenMiddleware);
 
 //==> routes <==//
 

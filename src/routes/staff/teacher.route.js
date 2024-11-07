@@ -97,12 +97,6 @@ teacherRouter
 		roleRestriction('admin'),
 		validateObjectId,
 		DeleteTeacherController
-);
-
-// refresh Teacher access token
-
-teacherRouter
-	.route('/refresh-token')
-	.get(RefreshTeacherTokenController);
+	);
 
 export default teacherRouter;

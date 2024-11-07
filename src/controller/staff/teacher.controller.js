@@ -112,7 +112,7 @@ export const RegisterTeacherController = AsyncHandler(
 //* @access Public
 
 export const LoginTeacherController = AsyncHandler(
-	async (req, res) => {
+	async (req, res, next) => {
 		// const { email, password } = req.body;
 		const parsedBody = loginAdminSchema.parse(req.body);
 		const { email, password } = parsedBody;
@@ -133,7 +133,8 @@ export const LoginTeacherController = AsyncHandler(
 		const { refreshToken, accessToken } =
 			await generateAccessTokenAndRefreshToken(
 				Teacher,
-				currentUser._id
+				currentUser._id,
+				next
 			);
 
 		let loginTeacherDetails = await Teacher.findById(
@@ -501,46 +502,4 @@ export const LogoutTeacherController = AsyncHandler(
 	}
 );
 
-//* @desc Refresh Teacher Token;
-//* @route POST /api/v1/teachers/refresh-token;
-//* @access Private;
 
-export const RefreshTeacherTokenController = AsyncHandler(
-	async (req, res) => {
-		const { refreshToken: sendRefreshToken } = req.cookies;
-		if (!sendRefreshToken) {
-			throw new ApiError(401, 'Unauthorized');
-		}
-
-		const currentTeacher = await Teacher.findOne({
-			refreshToken: sendRefreshToken,
-		});
-		if (!currentTeacher) {
-			throw new ApiError(401, 'Unauthorized');
-		}
-
-		const { accessToken, refreshToken } =
-			await generateAccessTokenAndRefreshToken(
-				Teacher,
-				currentTeacher._id
-			);
-
-		currentTeacher.refreshToken = refreshToken;
-		await currentTeacher.save();
-
-		return res
-			.status(200)
-			.cookie('accessToken', accessToken, cookiesOptions)
-			.cookie('refreshToken', refreshToken, cookiesOptions)
-			.json(
-				new ApiResponse(
-					200,
-					{
-						accessToken,
-						refreshToken: refreshToken,
-					},
-					'Token refreshed successfully'
-				)
-			);
-	}
-);
