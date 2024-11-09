@@ -41,7 +41,7 @@ const verifyJWT = (model) => {
 				return next(
 					new ApiError(
 						401,
-						'Unauthorized request: User not found'
+						"You don't have permission to access this action"
 					)
 				);
 			}

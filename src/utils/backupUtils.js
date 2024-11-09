@@ -2,13 +2,12 @@ import mongoose from 'mongoose';
 import Backup from '../model/BackUp/backUp.js';
 import ApiError from './ApiError.js';
 
-// Function to back up and delete the document
+// Function to backup and delete a document
 export const backupAndDelete = async (
-	model,
+	model, // complete model object nai patauna paryo
 	documentId,
 	originalDocument,
-	deletemessage,
-	next
+	deletemessage
 ) => {
 	try {
 		let documentToDelete = originalDocument;
@@ -21,9 +20,9 @@ export const backupAndDelete = async (
 
 		// Create a backup of the document
 		const backup = new Backup({
-			originalCollection: model.modelName, // Store the model name
+			originalCollection: model.modelName,
 			originalId: documentToDelete._id,
-			data: documentToDelete.toObject(), // Store the document data
+			data: documentToDelete.toObject(),
 		});
 
 		await backup.save();
@@ -34,35 +33,39 @@ export const backupAndDelete = async (
 		} else {
 			await documentToDelete.deleteOne();
 		}
+
+		return documentToDelete;
 	} catch (error) {
-		next(
-			new ApiError(500, deletemessage || 'Error while deleting')
+		throw new ApiError(
+			500,
+			deletemessage || 'Error while deleting , please try again'
 		);
 	}
 };
 
 // Function to restore a document from the backup
-export const restoreFromBackup = async (backupId, next) => {
+export const restoreFromBackup = async (backupId) => {
 	try {
 		const backup = await Backup.findById(backupId);
 
 		if (!backup) {
-			next(new ApiError(404, 'Backup not found'));
+			throw new ApiError(404, 'Backup not found');
 		}
 
 		// Load the correct model based on the backup's collection name
 		const model = mongoose.model(backup.originalCollection);
 		if (!model) {
-			next(new ApiError(500, 'Model not found'));
+			throw new ApiError(500, 'Model not found');
 		}
 
 		const restoredDocument = new model(backup.data);
-
 		await restoredDocument.save();
 
+		// Delete the backup after successful restoration
 		await Backup.findByIdAndDelete(backupId);
-		next();
+
+		return restoredDocument;
 	} catch (error) {
-		next(new ApiError(500, 'Error while restoring'));
+		throw new ApiError(500, 'Error while restoring');
 	}
 };

@@ -2,7 +2,9 @@ import { model, Schema } from 'mongoose';
 
 const ClassLevelSchema = new Schema(
 	{
-		// Semester 1,2,3,4,5,6,7,8
+		// student kun year ma cha vanerw refrence
+		// level 100 , 200 , 300 , 400
+		// (1st yrs , 2nd , 3rd,4th) ..
 		name: {
 			type: String,
 			required: true,

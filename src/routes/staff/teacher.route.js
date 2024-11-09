@@ -19,12 +19,14 @@ import { roleRestriction } from '../../middlewares/roleRestriction.middleware.js
 
 const teacherRouter = Router();
 
+const isAdmin = [isAuth(Admin), roleRestriction('admin')];
+const isTeacher = [isAuth(Teacher), roleRestriction('teacher')];
+
 // register a new admin
 teacherRouter
 	.route('/register/admin')
 	.post(
-		isAuth(Admin),
-		roleRestriction('admin'),
+		...isAdmin,
 		uploadFileMulter.single('coverImage'),
 		RegisterTeacherController
 	);
@@ -35,46 +37,29 @@ teacherRouter.route('/login').post(LoginTeacherController);
 // logout the Teacher
 teacherRouter
 	.route('/logout')
-	.get(
-		isAuth(Teacher),
-		roleRestriction('teacher'),
-		LogoutTeacherController
-	);
+	.get(...isTeacher, LogoutTeacherController);
 
 // get all Teachers
 teacherRouter
 	.route('/admin')
-	.get(
-		isAuth(Admin),
-		roleRestriction('admin'),
-		GetAllTeachersController
-	);
+	.get(...isAdmin, GetAllTeachersController);
 
 // get a current Teacher info
 teacherRouter
 	.route('/profile')
-	.get(
-		isAuth(Teacher),
-		roleRestriction('teacher'),
-		GetCurrentTeacherController
-	);
+	.get(...isTeacher, GetCurrentTeacherController);
 
 // get a specific  Teacher info
 teacherRouter
 	.route('/:teacherId/admin')
-	.get(
-		isAuth(Admin),
-		roleRestriction('admin'),
-		GetSingleTeacherController
-	);
+	.get(...isAdmin, GetSingleTeacherController);
 
 // update Teacher info by Teacher
 teacherRouter
 	.route('/update')
 	.put(
+		...isTeacher,
 		uploadFileMulter.single('coverImage'),
-		isAuth(Teacher),
-		roleRestriction('teacher'),
 		UpdateTeacherController
 	);
 
@@ -82,20 +67,14 @@ teacherRouter
 teacherRouter
 	.route('/:teacherId/update/admin')
 	.put(
+		...isAdmin,
 		uploadFileMulter.single('coverImage'),
-		isAuth(Admin),
-		roleRestriction('admin'),
 		UpdateTeacherControllerByAdmin
 	);
 
 // delete Teacher account
 teacherRouter
 	.route('/:teacherId/delete/admin')
-	.delete(
-		isAuth(Admin),
-		roleRestriction('admin'),
-		validateObjectId,
-		DeleteTeacherController
-	);
+	.delete(validateObjectId, ...isAdmin, DeleteTeacherController);
 
 export default teacherRouter;

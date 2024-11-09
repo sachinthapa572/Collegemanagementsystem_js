@@ -71,3 +71,9 @@ export const roles = Object.freeze({
 	TEACHER: 'Teacher',
 	STUDENT: 'Student',
 });
+
+// student image directory
+
+export const studentImageDirectory = (AcademicYear) => {
+	return `students/${AcademicYear}`;
+};

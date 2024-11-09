@@ -488,25 +488,35 @@ export const RestoreFromBackupController = AsyncHandler(
 
 		const admin = await Admin.findById(req.user._id);
 
-		//! pachi  superadmin role check garna its for the testing purpose
+		//! later  superAdmin role check
 		if (!admin) {
 			throw new ApiError(404, 'Admin not found');
 		}
 
-		// if (admin.role !== 'superadmin') {
+		// if (admin.role !== 'superAdmin') {
 		// 	throw new ApiError(403, 'Unauthorized access');
 		// }
-		
-		if (admin.email !== 'thapasachin572@gmail.com') {
-			throw new ApiError(403, 'Unauthorized access');
-		}
 
-		restoreFromBackup(req.params.id, next);
+		// if (admin.email !== 'thapasachin572@gmail.com') {
+		// 	throw new ApiError(403, 'Unauthorized access');
+		// }
+
+		const backupDocument = restoreFromBackup(req.params.id, next);
+
+		return res
+			.status(200)
+			.json(
+				new ApiResponse(
+					200,
+					backupDocument,
+					'Document restored successfully'
+				)
+			);
 	}
 );
 
 //* @desc get all backups details
-//* @route GET /api/v1/admin/backupdetails
+//* @route GET /api/v1/admin/backupDetails
 //* @access Private
 
 export const GetBackupDetailsController = AsyncHandler(
