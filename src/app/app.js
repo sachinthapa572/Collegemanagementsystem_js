@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { rateLimit } from 'express-rate-limit';
 import cron from 'node-cron';
+import helmet from 'helmet';
 
 import {
 	globalErrHandler,
@@ -16,8 +17,6 @@ import { corsOptions, rateLimitOptions } from '../constant.js';
 import refreshTokenMiddleware from '../middlewares/refreshToken.middleware.js';
 
 const app = express();
-
-
 
 //==> middlewares <==//
 app.use(morgan('dev'));
@@ -35,6 +34,7 @@ app.use(
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(rateLimit(rateLimitOptions));
+app.use(helmet());
 app.use(express.static('public'));
 
 //==>  Add token refresh middleware before the routes <==//
