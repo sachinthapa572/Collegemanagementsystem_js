@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
-import fs from 'fs';
 import { environmentVariables } from '../../constant.js';
+import ApiError from '../ApiError.js';
+import { safeUnlinkSync } from '../fileUtils.js';
 
 // Configuration
 cloudinary.config({
@@ -12,18 +13,21 @@ cloudinary.config({
 
 const uploadOnCloudinary = async (filePath, folder) => {
 	try {
-		if (!filePath) return;
+		if (!filePath) {
+			throw new ApiError(400, 'Invalid file path');
+		}
 		const result = await cloudinary.uploader.upload(filePath, {
-			asset_folder: `SchoolManagementApp/${folder}`,
 			resource_type: 'auto',
+			asset_folder: `SchoolManagementApp/${folder}`,
 		});
-
 		console.log('File Upload Successful', result.url);
-		fs.unlinkSync(filePath);
+		safeUnlinkSync(filePath);
 		return result;
 	} catch (error) {
-		fs.unlinkSync(filePath);
 		console.error('cloudinary Upload Error !! ', error);
+		if (filePath) {
+			safeUnlinkSync(filePath);
+		}
 		return null;
 	}
 };
@@ -38,4 +42,5 @@ const deleteFromCloudinary = async (publicId) => {
 		return null;
 	}
 };
+
 export { uploadOnCloudinary, deleteFromCloudinary };
