@@ -24,6 +24,3 @@ const safeUnlinkSync = (filePath) => {
 };
 
 export { safeUnlinkSync };
-    
-    
-    Sachin1Thapa <yousachin328gmail.com>

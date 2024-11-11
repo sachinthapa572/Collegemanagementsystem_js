@@ -1,4 +1,5 @@
-import { environmentVariables } from '../constant';
+import { environmentVariables } from '../constant.js';
+import { safeUnlinkSync } from './fileUtils.js';
 
 export async function fileTypeCheck(req) {
 	try {
@@ -12,7 +13,8 @@ export async function fileTypeCheck(req) {
 			)
 		) {
 			// If the content type is not valid, you can delete the file
-			fs.unlinkSync(req.file.path);
+			safeUnlinkSync(req.file.path);
+			// fs.unlinkSync(req.file.path);
 			return res.status(415).json({
 				message: 'Invalid file content. File must be an image.',
 			});
