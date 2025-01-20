@@ -32,7 +32,10 @@
 		"nodemailer": "^6.9.16",
 		"nodemon": "^3.1.7",
 		"uuid": "^10.0.0",
-		"zod": "^3.23.8"
+		"zod": "^3.23.8",
+		"@babel/core": "^7.20.0",
+		"@babel/preset-env": "^7.20.0",
+		"@babel/cli": "^7.20.0"
 	},
 	"devDependencies": {
 		"morgan": "^1.10.0",
