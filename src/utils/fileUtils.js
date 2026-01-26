@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const BASE_UPLOAD_DIR = path.resolve(__dirname, '../public/temp');
 
 // Function to safely delete a file synchronously
