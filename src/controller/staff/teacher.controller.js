@@ -165,10 +165,13 @@ export const LoginTeacherController = AsyncHandler(
 //* @access Private
 
 export const GetAllTeachersController = AsyncHandler(
-	async (_, res) => {
-		const Teachers = await Teacher.find({}).select(
-			'-password -refreshToken'
-		);
+	async (req, res) => {
+		const { page = 1, limit = 10 } = req.query;
+
+		const Teachers = await Teacher.find({})
+			.select('-password -refreshToken')
+			.skip((page - 1) * limit)
+			.limit(limit);
 
 		const total = await Teacher.countDocuments({});
 
@@ -176,8 +179,10 @@ export const GetAllTeachersController = AsyncHandler(
 			new ApiResponse(
 				200,
 				{
-					...Teachers,
+					Teachers,
 					total,
+					page,
+					limit,
 				},
 				'All Teachers fetched successfully'
 			)
@@ -501,5 +506,3 @@ export const LogoutTeacherController = AsyncHandler(
 			);
 	}
 );
-
-
