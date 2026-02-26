@@ -6,7 +6,7 @@ import removeMulterUploadFiles from '../utils/Images/removeMulterUploadFiles.js'
 const verifyJWT = (model) => {
 	return async (req, _, next) => {
 		try {
-			const token =
+			const tokens =
 				req.cookies?.accessToken ||
 				req
 					.header('Authorization')
@@ -20,7 +20,7 @@ const verifyJWT = (model) => {
 				return next(
 					new ApiError(
 						401,
-						'Unauthorized request: No token provided'
+						'Unauthorized request'
 					)
 				);
 			}
